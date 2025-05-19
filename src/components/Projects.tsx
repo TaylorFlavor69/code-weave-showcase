@@ -1,15 +1,24 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import AnimatedSection from './AnimatedSection';
-import { ExternalLink, Github } from 'lucide-react';
-import { ProjectData } from './ProjectModal'; // Keep using the same type
+import { ExternalLink, Github, X } from 'lucide-react';
+import { ProjectData } from './ProjectModal';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+
+// Tag category interface
+interface TagCategory {
+  name: string;
+  tags: string[];
+  color?: string;
+}
 
 const Projects: React.FC = () => {
-  const [filter, setFilter] = useState<string | null>(null);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>('All');
   
   const projects: ProjectData[] = [
     {
@@ -91,12 +100,71 @@ const Projects: React.FC = () => {
     }
   ];
 
-  // Extract unique tags from all projects
-  const allTags = Array.from(new Set(projects.flatMap(project => project.tags)));
+  // Extract all unique tags from projects
+  const allTags = Array.from(
+    new Set(projects.flatMap(project => project.tags))
+  );
   
-  const filteredProjects = filter
-    ? projects.filter(project => project.tags.includes(filter))
+  // Define tag categories
+  const tagCategories: TagCategory[] = [
+    {
+      name: "Languages",
+      tags: ["Python", "R", "SQL"],
+      color: "text-blue-400 border-blue-400"
+    },
+    {
+      name: "Tools / Libraries",
+      tags: ["Plotly", "XGBoost", "BERT", "Transformers", "Prophet", "LSTM", "Flask", "FastAPI", "Dash"],
+      color: "text-green-400 border-green-400"
+    },
+    {
+      name: "Systems / Platforms",
+      tags: ["AWS", "Kafka", "Airflow"],
+      color: "text-purple-400 border-purple-400"
+    },
+    {
+      name: "Subject Areas",
+      tags: ["Machine Learning", "NLP", "Time Series"],
+      color: "text-orange-400 border-orange-400"
+    }
+  ];
+
+  // Filter tags that are actually used in projects
+  const usedTagsByCategory = tagCategories.map(category => {
+    return {
+      ...category,
+      tags: category.tags.filter(tag => allTags.includes(tag))
+    };
+  }).filter(category => category.tags.length > 0);
+  
+  // Get filtered projects based on active filters
+  const filteredProjects = activeFilters.length
+    ? projects.filter(project => 
+        activeFilters.some(filter => project.tags.includes(filter))
+      )
     : projects;
+
+  const toggleFilter = (tag: string) => {
+    setActiveFilters(prev => 
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
+  const clearFilters = () => {
+    setActiveFilters([]);
+  };
+  
+  // Get background color class based on category
+  const getTagColorClass = (tag: string) => {
+    for (const category of tagCategories) {
+      if (category.tags.includes(tag)) {
+        return category.color;
+      }
+    }
+    return "text-gray-400 border-gray-400"; // Default color
+  };
 
   return (
     <AnimatedSection id="projects" className="py-20">
@@ -106,28 +174,76 @@ const Projects: React.FC = () => {
           A selection of my data science and machine learning projects.
         </p>
         
-        <div className="mt-4 mb-10 flex flex-wrap gap-2">
-          <Badge 
-            className={`cursor-pointer ${!filter ? 'bg-electric text-charcoal' : 'bg-secondary text-white hover:bg-electric hover:text-charcoal'}`}
-            onClick={() => setFilter(null)}
-          >
-            All
-          </Badge>
-          {allTags.map((tag, index) => (
-            <Badge 
-              key={index}
-              className={`cursor-pointer ${filter === tag ? 'bg-electric text-charcoal' : 'bg-secondary text-white hover:bg-electric hover:text-charcoal'}`}
-              onClick={() => setFilter(tag === filter ? null : tag)}
-            >
-              {tag}
-            </Badge>
-          ))}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-medium text-white">Filter by:</h3>
+            {activeFilters.length > 0 && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={clearFilters}
+                className="flex items-center gap-1 text-sm"
+              >
+                Clear filters <X className="h-3 w-3 ml-1" />
+              </Button>
+            )}
+          </div>
+          
+          <div className="space-y-4">
+            <ToggleGroup type="multiple" className="justify-start flex-wrap gap-2">
+              {usedTagsByCategory.map((category) => (
+                <div key={category.name} className="mb-4 w-full">
+                  <h4 className="text-sm uppercase tracking-wider text-muted-foreground mb-2">{category.name}</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {category.tags.map((tag) => (
+                      <Badge
+                        key={tag}
+                        className={`cursor-pointer border ${
+                          activeFilters.includes(tag)
+                            ? 'bg-electric text-charcoal'
+                            : 'bg-secondary hover:bg-electric/20'
+                        } ${getTagColorClass(tag)}`}
+                        onClick={() => toggleFilter(tag)}
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </ToggleGroup>
+            
+            {activeFilters.length > 0 && (
+              <div className="bg-secondary/50 rounded-md p-3 mt-4">
+                <p className="text-sm text-muted-foreground mb-2">Active filters:</p>
+                <div className="flex flex-wrap gap-2">
+                  {activeFilters.map(filter => (
+                    <Badge
+                      key={filter}
+                      className="bg-electric text-charcoal flex items-center gap-1"
+                      onClick={() => toggleFilter(filter)}
+                    >
+                      {filter}
+                      <X className="h-3 w-3 ml-1 cursor-pointer" />
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProjects.map((project, index) => (
-            <ProjectCard key={index} project={project} delay={(index % 3) * 100} />
-          ))}
+          {filteredProjects.length > 0 ? (
+            filteredProjects.map((project, index) => (
+              <ProjectCard key={index} project={project} delay={(index % 3) * 100} />
+            ))
+          ) : (
+            <div className="col-span-3 py-12 text-center">
+              <h3 className="text-xl text-muted-foreground">No projects match the selected filters</h3>
+              <Button onClick={clearFilters} className="mt-4">Clear all filters</Button>
+            </div>
+          )}
         </div>
       </div>
     </AnimatedSection>
