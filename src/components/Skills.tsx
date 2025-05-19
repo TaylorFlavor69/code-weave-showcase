@@ -6,7 +6,7 @@ import {
   AccordionItem, 
   AccordionTrigger 
 } from '@/components/ui/accordion';
-import { Code, Cloud, DollarSign, Cpu, Database, LineChart, Server, Share2, Terminal } from 'lucide-react';
+import { Code, Cloud, DollarSign, Cpu, Database, LineChart, Server, Share2, Terminal, MessageSquare, Users, Award } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import AnimatedSection from './AnimatedSection';
 
@@ -53,6 +53,26 @@ const SkillCategory: React.FC<SkillCategoryProps> = ({
         </AccordionContent>
       </AccordionItem>
     </Accordion>
+  );
+};
+
+interface SoftSkillProps {
+  title: string;
+  icon: React.ReactNode;
+  description: string;
+}
+
+const SoftSkill: React.FC<SoftSkillProps> = ({ title, icon, description }) => {
+  return (
+    <div className="mb-6">
+      <div className="flex items-center mb-2">
+        <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center mr-3 text-electric">
+          {icon}
+        </div>
+        <h4 className="text-lg font-medium">{title}</h4>
+      </div>
+      <p className="text-muted-foreground pl-11">{description}</p>
+    </div>
   );
 };
 
@@ -157,6 +177,24 @@ const Skills: React.FC = () => {
     }
   ];
 
+  const softSkills = [
+    {
+      title: "Communication",
+      icon: <MessageSquare className="h-4 w-4" />,
+      description: "Adept at translating complex technical concepts to non-technical stakeholders. I've led data literacy workshops for executives and created documentation that bridges the gap between data science teams and business units. My presentations regularly receive positive feedback for clarity and accessibility."
+    },
+    {
+      title: "Leadership",
+      icon: <Users className="h-4 w-4" />,
+      description: "Experienced in leading cross-functional data science teams of 3-7 members. I've mentored junior data scientists through project implementations and career development. My collaborative approach focuses on recognizing individual strengths while maintaining alignment with organizational goals."
+    },
+    {
+      title: "Adaptability",
+      icon: <Award className="h-4 w-4" />,
+      description: "Proven ability to quickly learn new technologies and methodologies as industry standards evolve. I've successfully transitioned projects from legacy systems to modern cloud architectures and pivoted analysis approaches when initial methods proved insufficient. This flexibility has been crucial in fast-paced environments."
+    }
+  ];
+
   return (
     <AnimatedSection id="skills" className="py-20 bg-navy">
       <div className="container mx-auto px-4 md:px-6">
@@ -176,6 +214,36 @@ const Skills: React.FC = () => {
               defaultOpen={category.defaultOpen}
             />
           ))}
+          
+          <Accordion type="single" collapsible>
+            <AccordionItem value="soft-skills" className="border-b border-muted/20">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center mr-4 text-electric">
+                    <Users className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-xl font-medium">Soft Skills</h3>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="pt-2 pb-4">
+                  <p className="text-muted-foreground mb-6">
+                    Professional competencies that enhance my technical expertise and enable successful project delivery and team collaboration.
+                  </p>
+                  <div className="space-y-4">
+                    {softSkills.map((skill, index) => (
+                      <SoftSkill
+                        key={index}
+                        title={skill.title}
+                        icon={skill.icon}
+                        description={skill.description}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       </div>
     </AnimatedSection>

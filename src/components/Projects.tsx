@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import ProjectModal, { ProjectData } from './ProjectModal';
+import { Link } from 'react-router-dom';
 import AnimatedSection from './AnimatedSection';
 import { ExternalLink, Github } from 'lucide-react';
+import { ProjectData } from './ProjectModal'; // Keep using the same type
 
 const Projects: React.FC = () => {
   const [filter, setFilter] = useState<string | null>(null);
@@ -163,9 +164,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, delay }) => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <ProjectModal project={project}>
+        <Link to={`/project/${project.id}`}>
           <Button variant="secondary">View Details</Button>
-        </ProjectModal>
+        </Link>
         <div className="flex gap-2">
           {project.github && (
             <Button size="icon" variant="outline" asChild>

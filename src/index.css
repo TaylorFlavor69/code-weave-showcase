@@ -74,4 +74,28 @@
   .card-hover {
     @apply transition-all duration-300 hover:shadow-lg hover:shadow-electric/10 hover:-translate-y-1;
   }
+
+  .prose {
+    @apply text-foreground;
+  }
+  
+  .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+    @apply text-white font-bold mb-4 mt-6;
+  }
+  
+  .prose p {
+    @apply mb-4 text-muted-foreground;
+  }
+  
+  .prose ul, .prose ol {
+    @apply mb-6 text-muted-foreground;
+  }
+  
+  .prose li {
+    @apply mb-2;
+  }
+  
+  .prose a {
+    @apply text-electric hover:underline;
+  }
 }
