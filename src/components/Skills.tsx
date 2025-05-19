@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Accordion, 
@@ -133,7 +132,7 @@ const Skills: React.FC = () => {
         },
         { 
           name: "Kubernetes", 
-          icon: <Server className="h-4 w-4" />,
+          icon: <Share2 className="h-4 w-4" />,
           description: "Designed and maintained microservice architectures for data products, with experience in deployment strategies and resource optimization."
         },
         { 
