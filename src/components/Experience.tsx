@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Building2, ExternalLink } from 'lucide-react';
+import { CalendarDays, Building2, ExternalLink, MapPin } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import AnimatedSection from './AnimatedSection';
 
@@ -12,6 +12,7 @@ interface BulletPoint {
 interface ExperienceItemProps {
   title: string;
   company: string;
+  location?: string;
   period: string;
   description: string;
   bulletPoints: BulletPoint[];
@@ -21,7 +22,8 @@ interface ExperienceItemProps {
 
 const ExperienceItem: React.FC<ExperienceItemProps> = ({ 
   title, 
-  company, 
+  company,
+  location,
   period, 
   description, 
   bulletPoints,
@@ -40,6 +42,12 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
               <CardDescription className="flex items-center mt-1 text-lg">
                 <Building2 className="mr-2 h-4 w-4 text-electric" /> 
                 {company}
+                {location && (
+                  <span className="flex items-center ml-3">
+                    <MapPin className="mr-1 h-4 w-4 text-electric" /> 
+                    {location}
+                  </span>
+                )}
               </CardDescription>
             </div>
             <div className="flex items-center text-muted-foreground">
@@ -76,40 +84,79 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
 const Experience: React.FC = () => {
   const experiences = [
     {
-      title: "Senior Data Scientist",
-      company: "Tech Company Inc.",
-      period: "2021 - Present",
-      description: "Led the development of machine learning models to predict customer behavior, resulting in a 24% increase in conversion rates. Designed and implemented data pipelines processing over 5TB of data daily.",
+      title: "Business Technical Analyst",
+      company: "Premier Inc",
+      location: "Remote (NC)",
+      period: "Jan 2025 - Present",
+      description: "Began in a data engineering role within the Advisory department, focused on managing data migrations and ETL processes from various Member source systems into proprietary ERP or analytics platforms. Later transitioned into a hybrid position, supporting both ongoing data engineering efforts and developing new data solutions within the Analytics Hub in collaboration with the Business Intelligence team.",
       bulletPoints: [
-        { text: "Led a team of 5 data scientists in building a real-time recommendation engine using PyTorch and Kafka" },
-        { text: "Reduced infrastructure costs by 35% through optimization of cloud resources and processing workflows" },
-        { text: "Presented quarterly insights to C-level executives, translating technical findings into business impact" }
+        { text: "Supported the Analytics Hub product by integrating internal and external systems, enabling up to 43% reduction in procurement operations costs for some Member organizations." },
+        { text: "Led AI and automation initiatives centered on LLMs, RAG, and AI agents, addressing key functional gaps and accelerating productivity." },
+        { text: "Collaborated cross-functionally with Advisory, BI, Supply Chain, offshore teams, and external partners to align business strategies and deliver scalable data solutions." },
+        { text: "Built ML models in Python to enhance field mapping and data matching, improving ERP conversion accuracy and reducing manual intervention." },
+        { text: "Automated repetitive workflows using Python, SQL, and Shell scripting, improving reliability and cutting down error-prone manual tasks." }
       ],
-      skills: ["Python", "PyTorch", "AWS", "Airflow", "SQL"]
+      skills: ["Python", "ML/AI", "SQL", "Azure", "BigQuery", "LLMs"]
     },
     {
-      title: "Data Scientist",
-      company: "Data Insights Corp.",
-      period: "2018 - 2021",
-      description: "Developed NLP algorithms for sentiment analysis on customer feedback, improving product satisfaction scores by 18%. Created interactive dashboards for business stakeholders.",
+      title: "Data Acquisition Analyst",
+      company: "Premier Inc",
+      location: "Remote (NC)",
+      period: "Apr 2022 - Dec 2024",
+      description: "Focused on managing data migrations and ETL processes from various Member source systems into proprietary ERP or analytics platforms.",
       bulletPoints: [
-        { text: "Built and deployed a BERT-based text classification system with 92% accuracy for routing customer inquiries" },
-        { text: "Designed a real-time dashboard system used by 200+ business users to track KPIs and product performance" },
-        { text: "Mentored 3 junior data scientists, developing their technical and communication skills" }
+        { text: "Engineered and maintained ETL pipelines using Python, SQL, Ab Initio, and APIs (SOAP, REST, RAAS) for secure cloud migration to Azure ADLS and BigQuery." },
+        { text: "Created and maintained internal documentation and a knowledge base to promote onboarding efficiency and cross-team transparency." },
+        { text: "Developed a scalable, automated demo database to support always-on product demonstrations." },
+        { text: "Delivered production-ready workflows and scripts in Python, PowerShell, and SQL for recurring analytics and reporting use cases." },
+        { text: "Regularly presented complex project updates to stakeholders, including executives and business leads, in clear, actionable formats." }
       ],
-      skills: ["Python", "Spark", "NLP", "Tableau", "GCP"]
+      skills: ["Python", "ETL", "SQL", "PowerShell", "Azure", "Documentation"]
     },
     {
-      title: "Data Analyst",
-      company: "Analytics Startup",
-      period: "2016 - 2018",
-      description: "Performed exploratory data analysis to identify trends in user acquisition. Built automated reporting systems that saved 15 hours of manual work weekly.",
+      title: "DevOps Analyst",
+      company: "Sidley Austin LLP",
+      location: "Chicago, IL",
+      period: "Mar 2021 - Apr 2022",
+      description: "Joined the Litigation Support department at the sixth-largest law firm globally, focusing on systems automation and infrastructure to enhance operational efficiency and accuracy across departments.",
       bulletPoints: [
-        { text: "Created automated ETL pipelines using Python and SQL, reducing manual reporting time by 80%" },
-        { text: "Identified key user segments that led to a 28% increase in customer retention after targeted interventions" },
-        { text: "Collaborated with marketing team to design and implement A/B testing framework for campaign optimization" }
+        { text: "Managed and automated tasks across 90+ servers containing sensitive client data using Python, PowerShell, JavaScript, and SQL." },
+        { text: "Conducted system maintenance and server restarts to ensure uptime and performance." },
+        { text: "Refactored 1,000+ SQL objects to align with new billing logic, improving data quality and system integrity." },
+        { text: "Supported and extended the client billing platform using C#, improving billing operations." },
+        { text: "Streamlined billing processes and eDiscovery workflows, increasing throughput and clarity." },
+        { text: "Provided frontline technical troubleshooting to both technical and non-technical users, minimizing business disruptions." },
+        { text: "Created user-friendly tools and forms that empowered users to complete secure, complex operations independently." }
       ],
-      skills: ["SQL", "R", "Excel", "PowerBI", "Statistics"]
+      skills: ["Python", "PowerShell", "SQL", "C#", "JavaScript", "Automation"]
+    },
+    {
+      title: "IT Specialist",
+      company: "ALDI Inc",
+      location: "Batavia, IL",
+      period: "Dec 2019 - Mar 2021",
+      description: "Worked with the newly formed Customer Interaction department, where I helped establish foundational systems and processes in a highly ambiguous environment.",
+      bulletPoints: [
+        { text: "Became Subject Matter Expert for 13 internal systems; promoted to senior role within first year." },
+        { text: "Provided technical support to 80+ non-technical users, ensuring smooth use of internal applications." },
+        { text: "Identified gaps in data collection and improved workflows for greater clarity and reliability." },
+        { text: "Used R to perform sentiment analysis on customer feedback, delivering actionable insights." },
+        { text: "Built automation scripts in C# and VBA to enhance CRM system efficiency and reduce manual tasks." }
+      ],
+      skills: ["R", "C#", "VBA", "SQL", "CRM", "Technical Support"]
+    },
+    {
+      title: "Systems and Data Analyst",
+      company: "ALDI Inc",
+      location: "Batavia, IL",
+      period: "Apr 2019 - Dec 2019",
+      description: "Joined in a contract role and was promoted to a senior team member within seven months. Worked with the newly formed Customer Interaction department, helping establish foundational systems and processes.",
+      bulletPoints: [
+        { text: "Played a key role in CRM system rollovers, ensuring seamless transitions and minimal disruption." },
+        { text: "Identified gaps in data collection and improved workflows for greater clarity and reliability." },
+        { text: "Provided technical support to non-technical users, ensuring smooth use of internal applications." }
+      ],
+      skills: ["SQL", "Data Analysis", "CRM", "Process Improvement"]
     }
   ];
 
@@ -127,6 +174,7 @@ const Experience: React.FC = () => {
               key={index}
               title={exp.title}
               company={exp.company}
+              location={exp.location}
               period={exp.period}
               description={exp.description}
               bulletPoints={exp.bulletPoints}
