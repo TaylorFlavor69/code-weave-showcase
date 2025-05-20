@@ -127,7 +127,7 @@ const Contact: React.FC = () => {
               <div className="space-y-3 text-muted-foreground">
                 <div className="flex items-center">
                   <AtSign className="mr-2 h-5 w-5 text-electric" />
-                  <span>your.email@example.com</span>
+                  <span>Justin.d.taylor2@gmail.com</span>
                 </div>
                 <p className="pt-2">
                   Based in San Francisco, CA
