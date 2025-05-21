@@ -51,6 +51,7 @@ const Navbar: React.FC = () => {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-4">
           <NavLink href="#about" title="About" />
+          <NavLink href="#about-me" title="About Me" />
           <NavLink href="#experience" title="Experience" />
           <NavLink href="#skills" title="Skills" />
           <NavLink href="#projects" title="Projects" />
@@ -82,6 +83,7 @@ const Navbar: React.FC = () => {
       >
         <div className="container mx-auto px-4 flex flex-col space-y-3">
           <a href="#about" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => setMobileMenuOpen(false)}>About</a>
+          <a href="#about-me" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => setMobileMenuOpen(false)}>About Me</a>
           <a href="#experience" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => setMobileMenuOpen(false)}>Experience</a>
           <a href="#skills" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => setMobileMenuOpen(false)}>Skills</a>
           <a href="#projects" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => setMobileMenuOpen(false)}>Projects</a>

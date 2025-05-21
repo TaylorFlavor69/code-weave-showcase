@@ -2,6 +2,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
+import AboutMe from '@/components/AboutMe';
 import Experience from '@/components/Experience';
 import Skills from '@/components/Skills';
 import Projects from '@/components/Projects';
@@ -13,6 +14,7 @@ const Index = () => {
     <div className="min-h-screen bg-charcoal">
       <Navbar />
       <Hero />
+      <AboutMe />
       <Experience />
       <Skills />
       <Projects />

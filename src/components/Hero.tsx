@@ -11,7 +11,7 @@ const Hero: React.FC = () => {
           <div className="flex-1 animate-fade-in">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
               <span className="text-white">Hi, I'm </span>
-              <span className="text-electric">Your Name</span>
+              <span className="text-electric">Justin Taylor</span>
             </h1>
             <h2 className="mt-4 text-2xl md:text-3xl font-medium text-muted-foreground">
               Data Scientist & Machine Learning Engineer
@@ -27,14 +27,14 @@ const Hero: React.FC = () => {
                 className="bg-electric text-charcoal hover:bg-white hover:text-charcoal"
                 size="lg"
               >
-                <a href="#experience">Experience</a>
+                <a href="#about-me">About Me</a>
               </Button>
               <Button 
                 asChild 
                 className="bg-secondary hover:bg-accent"
                 size="lg"
               >
-                <a href="#skills">Skills</a>
+                <a href="#experience">Experience</a>
               </Button>
               <Button 
                 asChild 
