@@ -34,7 +34,7 @@ const Hero: React.FC = () => {
                 className="bg-secondary hover:bg-accent"
                 size="lg"
               >
-                <a href="#experience">Experience</a>
+                <a href="#skills">Skills & Expertise</a>
               </Button>
               <Button 
                 asChild 
