@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Building2, ExternalLink, MapPin } from 'lucide-react';
+import { CalendarDays, MapPin } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import AnimatedSection from './AnimatedSection';
 
@@ -22,6 +22,7 @@ interface ExperienceItemProps {
   bulletPoints: BulletPoint[];
   skills: string[];
   delay: number;
+  tenure: string;
 }
 
 const ExperienceItem: React.FC<ExperienceItemProps> = ({ 
@@ -31,7 +32,8 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
   description, 
   bulletPoints,
   skills,
-  delay
+  delay,
+  tenure
 }) => {
   return (
     <div className="mb-8 animate-fade-in-up" style={{ animationDelay: `${delay}ms` }}>
@@ -51,33 +53,30 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
                 )}
               </CardDescription>
             </div>
+            <div className="flex items-center text-muted-foreground">
+              <CalendarDays className="mr-2 h-4 w-4" />
+              <span>{tenure}</span>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
-          {roles.map((role, index) => (
-            <div key={index} className="mb-4">
-              <div className="flex justify-between items-center flex-wrap gap-2 mb-2">
+          <div className="space-y-3 mb-4">
+            {roles.map((role, index) => (
+              <div key={index}>
                 <h4 className="text-lg font-medium text-white">{role.title}</h4>
-                <div className="flex items-center text-muted-foreground">
-                  <CalendarDays className="mr-2 h-4 w-4" />
-                  <span>{role.period}</span>
-                </div>
               </div>
-              {index === 0 && (
-                <>
-                  <p className="text-muted-foreground mb-4">{description}</p>
-                  
-                  {bulletPoints.length > 0 && (
-                    <ul className="list-disc pl-5 space-y-2 text-muted-foreground mb-4">
-                      {bulletPoints.map((point, idx) => (
-                        <li key={idx}>{point.text}</li>
-                      ))}
-                    </ul>
-                  )}
-                </>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
+          
+          <p className="text-muted-foreground mb-4">{description}</p>
+          
+          {bulletPoints.length > 0 && (
+            <ul className="list-disc pl-5 space-y-2 text-muted-foreground mb-4">
+              {bulletPoints.map((point, idx) => (
+                <li key={idx}>{point.text}</li>
+              ))}
+            </ul>
+          )}
         </CardContent>
         <CardFooter>
           <div className="flex flex-wrap gap-2">
@@ -98,6 +97,7 @@ const Experience: React.FC = () => {
     {
       company: "Premier Inc",
       location: "Remote (NC)",
+      tenure: "Apr 2022 - Present",
       roles: [
         { title: "Business Technical Analyst", period: "Jan 2025 - Present" },
         { title: "Data Acquisition Analyst", period: "Apr 2022 - Dec 2024" }
@@ -120,6 +120,7 @@ const Experience: React.FC = () => {
     {
       company: "Sidley Austin LLP",
       location: "Chicago, IL",
+      tenure: "Mar 2021 - Apr 2022",
       roles: [
         { title: "DevOps Analyst", period: "Mar 2021 - Apr 2022" }
       ],
@@ -138,6 +139,7 @@ const Experience: React.FC = () => {
     {
       company: "ALDI Inc",
       location: "Batavia, IL",
+      tenure: "Apr 2019 - Mar 2021",
       roles: [
         { title: "IT Specialist", period: "Dec 2019 - Mar 2021" },
         { title: "Systems and Data Analyst", period: "Apr 2019 - Dec 2019" }
@@ -174,6 +176,7 @@ const Experience: React.FC = () => {
               bulletPoints={exp.bulletPoints}
               skills={exp.skills}
               delay={index * 200}
+              tenure={exp.tenure}
             />
           ))}
         </div>
