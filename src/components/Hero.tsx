@@ -34,7 +34,14 @@ const Hero: React.FC = () => {
                 className="bg-secondary hover:bg-accent"
                 size="lg"
               >
-                <a href="#skills">Skills & Expertise</a>
+                <a href="#experience">Experience</a>
+              </Button>
+              <Button 
+                asChild 
+                variant="outline"
+                size="lg"
+              >
+                <a href="#skills">Skills</a>
               </Button>
               <Button 
                 asChild 
@@ -42,6 +49,13 @@ const Hero: React.FC = () => {
                 size="lg"
               >
                 <a href="#projects">Projects</a>
+              </Button>
+              <Button 
+                asChild 
+                variant="outline"
+                size="lg"
+              >
+                <a href="#contact">Contact</a>
               </Button>
             </div>
           </div>
