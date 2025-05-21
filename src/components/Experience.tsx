@@ -5,15 +5,19 @@ import { CalendarDays, Building2, ExternalLink, MapPin } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import AnimatedSection from './AnimatedSection';
 
+interface Role {
+  title: string;
+  period: string;
+}
+
 interface BulletPoint {
   text: string;
 }
 
 interface ExperienceItemProps {
-  title: string;
   company: string;
   location?: string;
-  period: string;
+  roles: Role[];
   description: string;
   bulletPoints: BulletPoint[];
   skills: string[];
@@ -21,10 +25,9 @@ interface ExperienceItemProps {
 }
 
 const ExperienceItem: React.FC<ExperienceItemProps> = ({ 
-  title, 
   company,
   location,
-  period, 
+  roles, 
   description, 
   bulletPoints,
   skills,
@@ -36,36 +39,45 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
         <CardHeader>
           <div className="flex justify-between items-start flex-wrap gap-2">
             <div>
-              <CardTitle className="text-xl md:text-2xl text-white">
-                {title}
-              </CardTitle>
-              <CardDescription className="flex items-center mt-1 text-lg">
-                <Building2 className="mr-2 h-4 w-4 text-electric" /> 
+              <CardTitle className="text-xl md:text-2xl text-white mb-1">
                 {company}
+              </CardTitle>
+              <CardDescription className="flex items-center text-lg">
                 {location && (
-                  <span className="flex items-center ml-3">
+                  <span className="flex items-center">
                     <MapPin className="mr-1 h-4 w-4 text-electric" /> 
                     {location}
                   </span>
                 )}
               </CardDescription>
             </div>
-            <div className="flex items-center text-muted-foreground">
-              <CalendarDays className="mr-2 h-4 w-4" />
-              <span>{period}</span>
-            </div>
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground mb-4">{description}</p>
-          
-          {bulletPoints.length > 0 && (
-            <ul className="list-disc pl-5 space-y-2 text-muted-foreground mb-4">
-              {bulletPoints.map((point, index) => (
-                <li key={index}>{point.text}</li>
-              ))}
-            </ul>
-          )}
+          {roles.map((role, index) => (
+            <div key={index} className="mb-4">
+              <div className="flex justify-between items-center flex-wrap gap-2 mb-2">
+                <h4 className="text-lg font-medium text-white">{role.title}</h4>
+                <div className="flex items-center text-muted-foreground">
+                  <CalendarDays className="mr-2 h-4 w-4" />
+                  <span>{role.period}</span>
+                </div>
+              </div>
+              {index === 0 && (
+                <>
+                  <p className="text-muted-foreground mb-4">{description}</p>
+                  
+                  {bulletPoints.length > 0 && (
+                    <ul className="list-disc pl-5 space-y-2 text-muted-foreground mb-4">
+                      {bulletPoints.map((point, idx) => (
+                        <li key={idx}>{point.text}</li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
         </CardContent>
         <CardFooter>
           <div className="flex flex-wrap gap-2">
@@ -84,40 +96,33 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
 const Experience: React.FC = () => {
   const experiences = [
     {
-      title: "Business Technical Analyst",
       company: "Premier Inc",
       location: "Remote (NC)",
-      period: "Jan 2025 - Present",
+      roles: [
+        { title: "Business Technical Analyst", period: "Jan 2025 - Present" },
+        { title: "Data Acquisition Analyst", period: "Apr 2022 - Dec 2024" }
+      ],
       description: "Began in a data engineering role within the Advisory department, focused on managing data migrations and ETL processes from various Member source systems into proprietary ERP or analytics platforms. Later transitioned into a hybrid position, supporting both ongoing data engineering efforts and developing new data solutions within the Analytics Hub in collaboration with the Business Intelligence team.",
       bulletPoints: [
         { text: "Supported the Analytics Hub product by integrating internal and external systems, enabling up to 43% reduction in procurement operations costs for some Member organizations." },
         { text: "Led AI and automation initiatives centered on LLMs, RAG, and AI agents, addressing key functional gaps and accelerating productivity." },
         { text: "Collaborated cross-functionally with Advisory, BI, Supply Chain, offshore teams, and external partners to align business strategies and deliver scalable data solutions." },
         { text: "Built ML models in Python to enhance field mapping and data matching, improving ERP conversion accuracy and reducing manual intervention." },
-        { text: "Automated repetitive workflows using Python, SQL, and Shell scripting, improving reliability and cutting down error-prone manual tasks." }
-      ],
-      skills: ["Python", "ML/AI", "SQL", "Azure", "BigQuery", "LLMs"]
-    },
-    {
-      title: "Data Acquisition Analyst",
-      company: "Premier Inc",
-      location: "Remote (NC)",
-      period: "Apr 2022 - Dec 2024",
-      description: "Focused on managing data migrations and ETL processes from various Member source systems into proprietary ERP or analytics platforms.",
-      bulletPoints: [
+        { text: "Automated repetitive workflows using Python, SQL, and Shell scripting, improving reliability and cutting down error-prone manual tasks." },
         { text: "Engineered and maintained ETL pipelines using Python, SQL, Ab Initio, and APIs (SOAP, REST, RAAS) for secure cloud migration to Azure ADLS and BigQuery." },
         { text: "Created and maintained internal documentation and a knowledge base to promote onboarding efficiency and cross-team transparency." },
         { text: "Developed a scalable, automated demo database to support always-on product demonstrations." },
         { text: "Delivered production-ready workflows and scripts in Python, PowerShell, and SQL for recurring analytics and reporting use cases." },
         { text: "Regularly presented complex project updates to stakeholders, including executives and business leads, in clear, actionable formats." }
       ],
-      skills: ["Python", "ETL", "SQL", "PowerShell", "Azure", "Documentation"]
+      skills: ["Python", "ML/AI", "SQL", "Azure", "BigQuery", "LLMs", "ETL", "PowerShell", "Documentation"]
     },
     {
-      title: "DevOps Analyst",
       company: "Sidley Austin LLP",
       location: "Chicago, IL",
-      period: "Mar 2021 - Apr 2022",
+      roles: [
+        { title: "DevOps Analyst", period: "Mar 2021 - Apr 2022" }
+      ],
       description: "Joined the Litigation Support department at the sixth-largest law firm globally, focusing on systems automation and infrastructure to enhance operational efficiency and accuracy across departments.",
       bulletPoints: [
         { text: "Managed and automated tasks across 90+ servers containing sensitive client data using Python, PowerShell, JavaScript, and SQL." },
@@ -131,32 +136,22 @@ const Experience: React.FC = () => {
       skills: ["Python", "PowerShell", "SQL", "C#", "JavaScript", "Automation"]
     },
     {
-      title: "IT Specialist",
       company: "ALDI Inc",
       location: "Batavia, IL",
-      period: "Dec 2019 - Mar 2021",
-      description: "Worked with the newly formed Customer Interaction department, where I helped establish foundational systems and processes in a highly ambiguous environment.",
+      roles: [
+        { title: "IT Specialist", period: "Dec 2019 - Mar 2021" },
+        { title: "Systems and Data Analyst", period: "Apr 2019 - Dec 2019" }
+      ],
+      description: "Joined in a contract role and was promoted to a senior team member within seven months. Worked with the newly formed Customer Interaction department, where I helped establish foundational systems and processes in a highly ambiguous environment.",
       bulletPoints: [
         { text: "Became Subject Matter Expert for 13 internal systems; promoted to senior role within first year." },
         { text: "Provided technical support to 80+ non-technical users, ensuring smooth use of internal applications." },
         { text: "Identified gaps in data collection and improved workflows for greater clarity and reliability." },
         { text: "Used R to perform sentiment analysis on customer feedback, delivering actionable insights." },
-        { text: "Built automation scripts in C# and VBA to enhance CRM system efficiency and reduce manual tasks." }
+        { text: "Built automation scripts in C# and VBA to enhance CRM system efficiency and reduce manual tasks." },
+        { text: "Played a key role in CRM system rollovers, ensuring seamless transitions and minimal disruption." }
       ],
-      skills: ["R", "C#", "VBA", "SQL", "CRM", "Technical Support"]
-    },
-    {
-      title: "Systems and Data Analyst",
-      company: "ALDI Inc",
-      location: "Batavia, IL",
-      period: "Apr 2019 - Dec 2019",
-      description: "Joined in a contract role and was promoted to a senior team member within seven months. Worked with the newly formed Customer Interaction department, helping establish foundational systems and processes.",
-      bulletPoints: [
-        { text: "Played a key role in CRM system rollovers, ensuring seamless transitions and minimal disruption." },
-        { text: "Identified gaps in data collection and improved workflows for greater clarity and reliability." },
-        { text: "Provided technical support to non-technical users, ensuring smooth use of internal applications." }
-      ],
-      skills: ["SQL", "Data Analysis", "CRM", "Process Improvement"]
+      skills: ["R", "C#", "VBA", "SQL", "CRM", "Technical Support", "Data Analysis", "Process Improvement"]
     }
   ];
 
@@ -172,10 +167,9 @@ const Experience: React.FC = () => {
           {experiences.map((exp, index) => (
             <ExperienceItem
               key={index}
-              title={exp.title}
               company={exp.company}
               location={exp.location}
-              period={exp.period}
+              roles={exp.roles}
               description={exp.description}
               bulletPoints={exp.bulletPoints}
               skills={exp.skills}
