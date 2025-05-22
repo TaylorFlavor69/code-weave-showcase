@@ -7,9 +7,23 @@ interface NavLinkProps {
 }
 
 const NavLink: React.FC<NavLinkProps> = ({ href, title }) => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const targetId = href.substring(1);
+    const targetElement = document.getElementById(targetId);
+    
+    if (targetElement) {
+      window.scrollTo({
+        top: targetElement.offsetTop,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <a 
       href={href} 
+      onClick={handleClick}
       className="px-4 py-2 rounded-md text-muted-foreground hover:text-electric transition-colors duration-300"
     >
       {title}
@@ -36,6 +50,20 @@ const Navbar: React.FC = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  // Handle smooth scrolling for mobile menu links
+  const handleMobileNavClick = (href: string) => {
+    setMobileMenuOpen(false);
+    const targetId = href.substring(1);
+    const targetElement = document.getElementById(targetId);
+    
+    if (targetElement) {
+      window.scrollTo({
+        top: targetElement.offsetTop,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <nav 
@@ -81,11 +109,11 @@ const Navbar: React.FC = () => {
         }`}
       >
         <div className="container mx-auto px-4 flex flex-col space-y-3">
-          <a href="#about-me" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => setMobileMenuOpen(false)}>About Me</a>
-          <a href="#experience" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => setMobileMenuOpen(false)}>Experience</a>
-          <a href="#skills" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => setMobileMenuOpen(false)}>Skills</a>
-          <a href="#projects" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => setMobileMenuOpen(false)}>Projects</a>
-          <a href="#contact" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => setMobileMenuOpen(false)}>Contact</a>
+          <a href="#about-me" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => handleMobileNavClick('#about-me')}>About Me</a>
+          <a href="#experience" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => handleMobileNavClick('#experience')}>Experience</a>
+          <a href="#skills" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => handleMobileNavClick('#skills')}>Skills</a>
+          <a href="#projects" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => handleMobileNavClick('#projects')}>Projects</a>
+          <a href="#contact" className="px-4 py-2 text-muted-foreground hover:text-electric" onClick={() => handleMobileNavClick('#contact')}>Contact</a>
         </div>
       </div>
     </nav>
