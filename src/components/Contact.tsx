@@ -130,7 +130,7 @@ const Contact: React.FC = () => {
                   <span>Justin.d.taylor2@gmail.com</span>
                 </div>
                 <p className="pt-2">
-                  Based in San Francisco, CA
+                  Based in Chicago, IL
                 </p>
               </div>
             </div>
