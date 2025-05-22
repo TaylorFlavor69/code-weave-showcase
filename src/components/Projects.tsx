@@ -1,13 +1,24 @@
-
 import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import AnimatedSection from './AnimatedSection';
-import { ExternalLink, Github, X } from 'lucide-react';
+import { ExternalLink, Github, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { ProjectData } from './ProjectModal';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 // Tag category interface
 interface TagCategory {
@@ -19,6 +30,7 @@ interface TagCategory {
 const Projects: React.FC = () => {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [expandedCategory, setExpandedCategory] = useState<string | null>('All');
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
   
   const projects: ProjectData[] = [
     {
@@ -166,6 +178,11 @@ const Projects: React.FC = () => {
     return "text-gray-400 border-gray-400"; // Default color
   };
 
+  // Toggle category dropdown
+  const toggleCategory = (categoryName: string) => {
+    setOpenCategory(openCategory === categoryName ? null : categoryName);
+  };
+
   return (
     <AnimatedSection id="projects" className="py-20">
       <div className="container mx-auto px-4 md:px-6">
@@ -190,28 +207,47 @@ const Projects: React.FC = () => {
           </div>
           
           <div className="space-y-4">
-            <ToggleGroup type="multiple" className="justify-start flex-wrap gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {usedTagsByCategory.map((category) => (
-                <div key={category.name} className="mb-4 w-full">
-                  <h4 className="text-sm uppercase tracking-wider text-muted-foreground mb-2">{category.name}</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {category.tags.map((tag) => (
-                      <Badge
-                        key={tag}
-                        className={`cursor-pointer border ${
-                          activeFilters.includes(tag)
-                            ? 'bg-electric text-charcoal'
-                            : 'bg-secondary hover:bg-electric/20'
-                        } ${getTagColorClass(tag)}`}
-                        onClick={() => toggleFilter(tag)}
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
+                <Popover 
+                  key={category.name} 
+                  open={openCategory === category.name}
+                  onOpenChange={() => toggleCategory(category.name)}
+                >
+                  <PopoverTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-between"
+                      onClick={() => toggleCategory(category.name)}
+                    >
+                      {category.name}
+                      {openCategory === category.name ? (
+                        <ChevronUp className="h-4 w-4 ml-2" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4 ml-2" />
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-4 bg-charcoal border border-secondary z-50">
+                    <div className="flex flex-wrap gap-2">
+                      {category.tags.map((tag) => (
+                        <Badge
+                          key={tag}
+                          className={`cursor-pointer border ${
+                            activeFilters.includes(tag)
+                              ? 'bg-electric text-charcoal'
+                              : 'bg-secondary hover:bg-electric/20'
+                          } ${getTagColorClass(tag)}`}
+                          onClick={() => toggleFilter(tag)}
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
               ))}
-            </ToggleGroup>
+            </div>
             
             {activeFilters.length > 0 && (
               <div className="bg-secondary/50 rounded-md p-3 mt-4">
