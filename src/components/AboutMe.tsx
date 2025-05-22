@@ -14,38 +14,27 @@ const AboutMe: React.FC = () => {
           </p>
 
           <p className="text-lg text-muted-foreground mb-6">
-            I'm a data scientist and machine learning engineer with a passion for transforming complex data into 
-            actionable insights. With extensive experience in automation, ETL processes, and AI integration, 
-            I help organizations leverage their data to make better decisions and improve operations.
+            My career at Premier began in a data engineering capacity, where I focused on building and maintaining data pipelines, executing ETL processes, and managing data mapping and migration efforts. I worked cross-functionally across teams to support enterprise-scale analytics solutions and was hand-selected to support a flagship initiative around Enterprise Data Acquisition.
           </p>
 
           <p className="text-lg text-muted-foreground mb-6">
-            I'm a data scientist and machine learning engineer with a passion for transforming complex data into 
-            actionable insights. With extensive experience in automation, ETL processes, and AI integration, 
-            I help organizations leverage their data to make better decisions and improve operations.
+            While Premier has traditionally served as a GPO and ERP provider, the company has recently expanded its focus to market data and analytics products, targeting enterprise clients and large health systems. This work involves integrating data from health systems using third-party ERPs into Premier’s platforms, enabling visibility and benchmarking capabilities. Our pipelines—primarily built with Ab Initio—land data into Azure Data Lake Storage, which is then processed and served via Google Cloud Platform into our Analytics Hub. These workflows involve heavy use of Python, SQL, and cloud-native tools.
           </p>
 
           <p className="text-lg text-muted-foreground mb-6">
-            I'm a data scientist and machine learning engineer with a passion for transforming complex data into 
-            actionable insights. With extensive experience in automation, ETL processes, and AI integration, 
-            I help organizations leverage their data to make better decisions and improve operations.
+            I’ve recently transitioned into a new hybrid role where I continue to support my previous responsibilities (30–50% of my time), while dedicating the remainder to our Analytics Hub platform. This role blends technical execution with business strategy and market research. I work in BigQuery, create Colab notebooks, and integrate tools like the Gemini Flash 2.5 API to build solutions, automate insights, and fill in analytical gaps for our Member organizations.
           </p>
 
           <p className="text-lg text-muted-foreground mb-6">
-            I'm a data scientist and machine learning engineer with a passion for transforming complex data into 
-            actionable insights. With extensive experience in automation, ETL processes, and AI integration, 
-            I help organizations leverage their data to make better decisions and improve operations.
+            Before Premier, I worked on a development team at the sixth-largest law firm in the world, designing internal systems for lawyers, PMs, specialists, and analysts—tools that improved workflow efficiency, accuracy, and strategic decision-making.
           </p>
           
           <p className="text-lg text-muted-foreground mb-6">
-            My technical expertise spans Python, SQL, machine learning, and cloud technologies, 
-            with a particular focus on AI applications and large language models. I enjoy tackling 
-            challenging problems that combine technical expertise with business acumen.
+            Earlier in my career, I was part of Aldi’s Customer Interaction department, where I focused on customer experience analytics, journey mapping, sentiment analysis, and supporting operational improvements across customer communication channels.
           </p>
           
           <p className="text-lg text-muted-foreground">
-            When I'm not working with data, I enjoy staying up-to-date with the latest AI research,
-            contributing to open-source projects, and exploring new technologies.
+            I'm passionate about solving meaningful problems and constantly expanding my skillset. I thrive in environments that require adaptability, curiosity, and cross-functional collaboration. The ever-evolving nature of data science keeps me engaged—what worked last year might not work next year, and that’s exactly what I love about this field. I embrace change and navigate ambiguity with confidence and creativity.
           </p>
         </div>
       </div>
