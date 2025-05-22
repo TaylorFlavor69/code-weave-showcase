@@ -10,6 +10,28 @@ const AboutMe: React.FC = () => {
         
         <div className="max-w-3xl mx-auto">
           <p className="text-lg text-muted-foreground mb-6">
+            Hi, I’m Justin — a Data Science Professional based in Chicago, currently working remotely for Premier Inc., headquartered in North Carolina.
+          </p>
+
+          <p className="text-lg text-muted-foreground mb-6">
+            I'm a data scientist and machine learning engineer with a passion for transforming complex data into 
+            actionable insights. With extensive experience in automation, ETL processes, and AI integration, 
+            I help organizations leverage their data to make better decisions and improve operations.
+          </p>
+
+          <p className="text-lg text-muted-foreground mb-6">
+            I'm a data scientist and machine learning engineer with a passion for transforming complex data into 
+            actionable insights. With extensive experience in automation, ETL processes, and AI integration, 
+            I help organizations leverage their data to make better decisions and improve operations.
+          </p>
+
+          <p className="text-lg text-muted-foreground mb-6">
+            I'm a data scientist and machine learning engineer with a passion for transforming complex data into 
+            actionable insights. With extensive experience in automation, ETL processes, and AI integration, 
+            I help organizations leverage their data to make better decisions and improve operations.
+          </p>
+
+          <p className="text-lg text-muted-foreground mb-6">
             I'm a data scientist and machine learning engineer with a passion for transforming complex data into 
             actionable insights. With extensive experience in automation, ETL processes, and AI integration, 
             I help organizations leverage their data to make better decisions and improve operations.
