@@ -14,7 +14,7 @@ const Hero: React.FC = () => {
               <span className="text-electric">Justin Taylor</span>
             </h1>
             <h2 className="mt-4 text-2xl md:text-3xl font-medium text-muted-foreground">
-              Data Scientist & Machine Learning Engineer
+              Data Science Professional
             </h2>
             <p className="mt-6 text-lg text-muted-foreground max-w-2xl">
               I transform complex data into actionable insights, build scalable machine learning solutions, 
