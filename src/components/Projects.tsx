@@ -1,207 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import AnimatedSection from './AnimatedSection';
-import { ExternalLink, Github, X, ChevronDown, ChevronUp } from 'lucide-react';
-import { ProjectData } from './ProjectModal';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
-// Tag category interface
-interface TagCategory {
-  name: string;
-  tags: string[];
-  color?: string;
-}
+import React from 'react';
+import AnimatedSection from './AnimatedSection';
+import ProjectsFilter from './ProjectsFilter';
+import ProjectsGrid from './ProjectsGrid';
+import { useProjectsFilter } from '@/hooks/useProjectsFilter';
 
 const Projects: React.FC = () => {
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [expandedCategory, setExpandedCategory] = useState<string | null>('All');
-  const [openCategory, setOpenCategory] = useState<string | null>(null);
-  
-  const projects: ProjectData[] = [
-    {
-      id: 1,
-      title: "Customer Churn Prediction",
-      shortDescription: "ML model predicting customer churn with 92% accuracy",
-      fullDescription: `
-        <p>Built an end-to-end machine learning pipeline for predicting customer churn with over 92% accuracy. The solution includes:</p>
-        <ul class="list-disc pl-6 space-y-2 mt-2">
-          <li>Data preprocessing and feature engineering pipeline</li>
-          <li>Model training with XGBoost and hyperparameter optimization</li>
-          <li>Model explainability using SHAP values</li>
-          <li>API endpoint for real-time predictions</li>
-          <li>Interactive dashboard for business stakeholders</li>
-        </ul>
-        <p class="mt-4">The model is currently deployed in production and has helped reduce churn by 18%.</p>
-      `,
-      image: "/placeholder.svg",
-      tags: ["Python", "Machine Learning", "XGBoost", "Flask", "AWS"],
-      github: "https://github.com",
-      demo: "https://demo.com"
-    },
-    {
-      id: 2,
-      title: "Real-time Data Analytics Dashboard",
-      shortDescription: "Interactive Plotly Dash dashboard for analytics",
-      fullDescription: `
-        <p>Designed and developed a real-time analytics dashboard using Plotly Dash that processes streaming data from IoT devices.</p>
-        <ul class="list-disc pl-6 space-y-2 mt-2">
-          <li>Integration with Kafka for real-time data streaming</li>
-          <li>Interactive visualizations with drill-down capabilities</li>
-          <li>Anomaly detection algorithms for real-time monitoring</li>
-          <li>Responsive design that works on desktop and tablets</li>
-        </ul>
-        <p class="mt-4">This dashboard is used daily by the operations team to monitor system performance and detect issues early.</p>
-      `,
-      image: "/placeholder.svg",
-      tags: ["Python", "Plotly", "Dash", "Kafka", "Time Series"],
-      github: "https://github.com",
-      demo: "https://demo.com",
-      embedUrl: "https://plotly.com/dash/design-kit/"
-    },
-    {
-      id: 3,
-      title: "NLP for Customer Support",
-      shortDescription: "NLP system for automating customer support",
-      fullDescription: `
-        <p>Developed a natural language processing system that automatically categorizes and routes customer support tickets.</p>
-        <ul class="list-disc pl-6 space-y-2 mt-2">
-          <li>Fine-tuned BERT model for ticket classification</li>
-          <li>Entity recognition for extracting key information</li>
-          <li>Automated response generation for common queries</li>
-          <li>Integration with existing ticketing system</li>
-        </ul>
-        <p class="mt-4">This system reduced the average response time by 45% and improved customer satisfaction scores.</p>
-      `,
-      image: "/placeholder.svg",
-      tags: ["Python", "NLP", "BERT", "Transformers", "FastAPI"],
-      github: "https://github.com"
-    },
-    {
-      id: 4,
-      title: "Sales Forecasting Engine",
-      shortDescription: "Time series forecasting for retail sales",
-      fullDescription: `
-        <p>Built a time series forecasting engine for predicting retail sales across multiple store locations and product categories.</p>
-        <ul class="list-disc pl-6 space-y-2 mt-2">
-          <li>Prophet and ARIMA models for baseline forecasting</li>
-          <li>LSTM neural networks for capturing complex patterns</li>
-          <li>Feature engineering including holiday effects and seasonality</li>
-          <li>Automated retraining pipeline using Airflow</li>
-        </ul>
-        <p class="mt-4">The forecasting engine has improved inventory management efficiency by 28% and reduced stockouts by 33%.</p>
-      `,
-      image: "/placeholder.svg",
-      tags: ["Python", "Time Series", "Prophet", "LSTM", "Airflow"],
-      github: "https://github.com",
-      demo: "https://demo.com"
-    },
-    {
-      id: 5,
-      title: "Data Visualization AI Agent",
-      shortDescription: "Interactive AI-powered data analysis and visualization tool",
-      fullDescription: `
-        <p>A secure, interactive demo that uses PandasAI with OpenAI and Gemini models to answer questions about data and generate visualizations from natural language input.</p>
-        <ul class="list-disc pl-6 space-y-2 mt-2">
-          <li>Natural language query processing for data analysis</li>
-          <li>AI-powered chart and graph generation</li>
-          <li>Multiple dataset support with preview capabilities</li>
-          <li>Secure authentication and request limiting</li>
-          <li>Interactive visualization outputs</li>
-        </ul>
-        <p class="mt-4">This tool democratizes data analysis by allowing users to explore datasets using plain English queries.</p>
-      `,
-      image: "/placeholder.svg",
-      tags: ["Python", "PandasAI", "OpenAI", "Gemini", "Data Visualization"],
-      github: "https://github.com",
-      demo: "https://demo.com"
-    }
-  ];
-
-  // Extract all unique tags from projects
-  const allTags = Array.from(
-    new Set(projects.flatMap(project => project.tags))
-  );
-  
-  // Define tag categories
-  const tagCategories: TagCategory[] = [
-    {
-      name: "Languages",
-      tags: ["Python", "R", "SQL"],
-      color: "text-blue-400 border-blue-400"
-    },
-    {
-      name: "Tools / Libraries",
-      tags: ["Plotly", "XGBoost", "BERT", "Transformers", "Prophet", "LSTM", "Flask", "FastAPI", "Dash", "PandasAI"],
-      color: "text-green-400 border-green-400"
-    },
-    {
-      name: "Systems / Platforms",
-      tags: ["AWS", "Kafka", "Airflow", "OpenAI", "Gemini"],
-      color: "text-purple-400 border-purple-400"
-    },
-    {
-      name: "Subject Areas",
-      tags: ["Machine Learning", "NLP", "Time Series", "Data Visualization"],
-      color: "text-orange-400 border-orange-400"
-    }
-  ];
-
-  // Filter tags that are actually used in projects
-  const usedTagsByCategory = tagCategories.map(category => {
-    return {
-      ...category,
-      tags: category.tags.filter(tag => allTags.includes(tag))
-    };
-  }).filter(category => category.tags.length > 0);
-  
-  // Get filtered projects based on active filters
-  const filteredProjects = activeFilters.length
-    ? projects.filter(project => 
-        activeFilters.some(filter => project.tags.includes(filter))
-      )
-    : projects;
-
-  const toggleFilter = (tag: string) => {
-    setActiveFilters(prev => 
-      prev.includes(tag)
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    );
-  };
-
-  const clearFilters = () => {
-    setActiveFilters([]);
-  };
-  
-  // Get background color class based on category
-  const getTagColorClass = (tag: string) => {
-    for (const category of tagCategories) {
-      if (category.tags.includes(tag)) {
-        return category.color;
-      }
-    }
-    return "text-gray-400 border-gray-400"; // Default color
-  };
-
-  // Toggle category dropdown
-  const toggleCategory = (categoryName: string) => {
-    setOpenCategory(openCategory === categoryName ? null : categoryName);
-  };
+  const {
+    activeFilters,
+    openCategory,
+    usedTagsByCategory,
+    filteredProjects,
+    toggleFilter,
+    clearFilters,
+    getTagColorClass,
+    toggleCategory
+  } = useProjectsFilter();
 
   return (
     <AnimatedSection id="projects" className="py-20">
@@ -211,152 +25,22 @@ const Projects: React.FC = () => {
           A selection of my data science and machine learning projects.
         </p>
         
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium text-white">Filter by:</h3>
-            {activeFilters.length > 0 && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={clearFilters}
-                className="flex items-center gap-1 text-sm"
-              >
-                Clear filters <X className="h-3 w-3 ml-1" />
-              </Button>
-            )}
-          </div>
-          
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {usedTagsByCategory.map((category) => (
-                <Popover 
-                  key={category.name} 
-                  open={openCategory === category.name}
-                  onOpenChange={() => toggleCategory(category.name)}
-                >
-                  <PopoverTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-between"
-                      onClick={() => toggleCategory(category.name)}
-                    >
-                      {category.name}
-                      {openCategory === category.name ? (
-                        <ChevronUp className="h-4 w-4 ml-2" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4 ml-2" />
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-4 bg-charcoal border border-secondary z-50">
-                    <div className="flex flex-wrap gap-2">
-                      {category.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          className={`cursor-pointer border ${
-                            activeFilters.includes(tag)
-                              ? 'bg-electric text-charcoal'
-                              : 'bg-secondary hover:bg-electric/20'
-                          } ${getTagColorClass(tag)}`}
-                          onClick={() => toggleFilter(tag)}
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              ))}
-            </div>
-            
-            {activeFilters.length > 0 && (
-              <div className="bg-secondary/50 rounded-md p-3 mt-4">
-                <p className="text-sm text-muted-foreground mb-2">Active filters:</p>
-                <div className="flex flex-wrap gap-2">
-                  {activeFilters.map(filter => (
-                    <Badge
-                      key={filter}
-                      className="bg-electric text-charcoal flex items-center gap-1"
-                      onClick={() => toggleFilter(filter)}
-                    >
-                      {filter}
-                      <X className="h-3 w-3 ml-1 cursor-pointer" />
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <ProjectsFilter
+          usedTagsByCategory={usedTagsByCategory}
+          activeFilters={activeFilters}
+          openCategory={openCategory}
+          onToggleFilter={toggleFilter}
+          onClearFilters={clearFilters}
+          onToggleCategory={toggleCategory}
+          getTagColorClass={getTagColorClass}
+        />
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProjects.length > 0 ? (
-            filteredProjects.map((project, index) => (
-              <ProjectCard key={index} project={project} delay={(index % 3) * 100} />
-            ))
-          ) : (
-            <div className="col-span-3 py-12 text-center">
-              <h3 className="text-xl text-muted-foreground">No projects match the selected filters</h3>
-              <Button onClick={clearFilters} className="mt-4">Clear all filters</Button>
-            </div>
-          )}
-        </div>
+        <ProjectsGrid
+          filteredProjects={filteredProjects}
+          onClearFilters={clearFilters}
+        />
       </div>
     </AnimatedSection>
-  );
-};
-
-interface ProjectCardProps {
-  project: ProjectData;
-  delay: number;
-}
-
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, delay }) => {
-  return (
-    <Card className="bg-secondary hover:bg-secondary/80 border-none h-full flex flex-col card-hover animate-fade-in-up" style={{ animationDelay: `${delay}ms` }}>
-      <CardHeader className="p-0">
-        <div className="aspect-video overflow-hidden">
-          <img 
-            src={project.image || "/placeholder.svg"}
-            alt={project.title}
-            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-          />
-        </div>
-      </CardHeader>
-      <CardContent className="pt-6 flex-grow">
-        <h3 className="text-xl font-semibold text-white mb-2">{project.title}</h3>
-        <p className="text-muted-foreground">{project.shortDescription}</p>
-        <div className="flex flex-wrap gap-2 mt-4">
-          {project.tags.slice(0, 3).map((tag, i) => (
-            <Badge key={i} variant="outline" className="text-xs">{tag}</Badge>
-          ))}
-          {project.tags.length > 3 && (
-            <Badge variant="outline" className="text-xs">+{project.tags.length - 3}</Badge>
-          )}
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Link to={`/project/${project.id}`}>
-          <Button variant="secondary">View Details</Button>
-        </Link>
-        <div className="flex gap-2">
-          {project.github && (
-            <Button size="icon" variant="outline" asChild>
-              <a href={project.github} target="_blank" rel="noopener noreferrer">
-                <Github className="h-4 w-4" />
-              </a>
-            </Button>
-          )}
-          {project.demo && (
-            <Button size="icon" variant="outline" asChild>
-              <a href={project.demo} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4" />
-              </a>
-            </Button>
-          )}
-        </div>
-      </CardFooter>
-    </Card>
   );
 };
 
