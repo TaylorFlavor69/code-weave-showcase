@@ -1,84 +1,6 @@
-
 import { ProjectData } from '@/components/ProjectModal';
 
 export const projects: ProjectData[] = [
-  {
-    id: 1,
-    title: "Customer Churn Prediction",
-    shortDescription: "ML model predicting customer churn with 92% accuracy",
-    fullDescription: `
-      <p>Built an end-to-end machine learning pipeline for predicting customer churn with over 92% accuracy. The solution includes:</p>
-      <ul class="list-disc pl-6 space-y-2 mt-2">
-        <li>Data preprocessing and feature engineering pipeline</li>
-        <li>Model training with XGBoost and hyperparameter optimization</li>
-        <li>Model explainability using SHAP values</li>
-        <li>API endpoint for real-time predictions</li>
-        <li>Interactive dashboard for business stakeholders</li>
-      </ul>
-      <p class="mt-4">The model is currently deployed in production and has helped reduce churn by 18%.</p>
-    `,
-    image: "/placeholder.svg",
-    tags: ["Python", "Machine Learning", "XGBoost", "Flask", "AWS"],
-    github: "https://github.com",
-    demo: "https://demo.com"
-  },
-  {
-    id: 2,
-    title: "Real-time Data Analytics Dashboard",
-    shortDescription: "Interactive Plotly Dash dashboard for analytics",
-    fullDescription: `
-      <p>Designed and developed a real-time analytics dashboard using Plotly Dash that processes streaming data from IoT devices.</p>
-      <ul class="list-disc pl-6 space-y-2 mt-2">
-        <li>Integration with Kafka for real-time data streaming</li>
-        <li>Interactive visualizations with drill-down capabilities</li>
-        <li>Anomaly detection algorithms for real-time monitoring</li>
-        <li>Responsive design that works on desktop and tablets</li>
-      </ul>
-      <p class="mt-4">This dashboard is used daily by the operations team to monitor system performance and detect issues early.</p>
-    `,
-    image: "/placeholder.svg",
-    tags: ["Python", "Plotly", "Dash", "Kafka", "Time Series"],
-    github: "https://github.com",
-    demo: "https://demo.com",
-    embedUrl: "https://plotly.com/dash/design-kit/"
-  },
-  {
-    id: 3,
-    title: "NLP for Customer Support",
-    shortDescription: "NLP system for automating customer support",
-    fullDescription: `
-      <p>Developed a natural language processing system that automatically categorizes and routes customer support tickets.</p>
-      <ul class="list-disc pl-6 space-y-2 mt-2">
-        <li>Fine-tuned BERT model for ticket classification</li>
-        <li>Entity recognition for extracting key information</li>
-        <li>Automated response generation for common queries</li>
-        <li>Integration with existing ticketing system</li>
-      </ul>
-      <p class="mt-4">This system reduced the average response time by 45% and improved customer satisfaction scores.</p>
-    `,
-    image: "/placeholder.svg",
-    tags: ["Python", "NLP", "BERT", "Transformers", "FastAPI"],
-    github: "https://github.com"
-  },
-  {
-    id: 4,
-    title: "Sales Forecasting Engine",
-    shortDescription: "Time series forecasting for retail sales",
-    fullDescription: `
-      <p>Built a time series forecasting engine for predicting retail sales across multiple store locations and product categories.</p>
-      <ul class="list-disc pl-6 space-y-2 mt-2">
-        <li>Prophet and ARIMA models for baseline forecasting</li>
-        <li>LSTM neural networks for capturing complex patterns</li>
-        <li>Feature engineering including holiday effects and seasonality</li>
-        <li>Automated retraining pipeline using Airflow</li>
-      </ul>
-      <p class="mt-4">The forecasting engine has improved inventory management efficiency by 28% and reduced stockouts by 33%.</p>
-    `,
-    image: "/placeholder.svg",
-    tags: ["Python", "Time Series", "Prophet", "LSTM", "Airflow"],
-    github: "https://github.com",
-    demo: "https://demo.com"
-  },
   {
     id: 5,
     title: "Data Visualization AI Agent",
@@ -96,6 +18,26 @@ export const projects: ProjectData[] = [
     `,
     image: "/placeholder.svg",
     tags: ["Python", "PandasAI", "OpenAI", "Gemini", "Data Visualization"],
+    github: "https://github.com",
+    demo: "/data-visualization-agent"
+  },
+  {
+    id: 6,
+    title: "Anomaly Detection & Customer Conversion Analysis",
+    shortDescription: "ML pipeline for detecting anomalies and analyzing customer conversion patterns",
+    fullDescription: `
+      <p>Built a comprehensive machine learning pipeline that combines anomaly detection with customer conversion analysis to identify unusual patterns and optimize conversion rates.</p>
+      <ul class="list-disc pl-6 space-y-2 mt-2">
+        <li>Real-time anomaly detection using isolation forests and statistical methods</li>
+        <li>Customer journey mapping and conversion funnel analysis</li>
+        <li>Feature engineering for behavioral pattern recognition</li>
+        <li>Interactive dashboards for business stakeholders</li>
+        <li>Automated alerting system for critical anomalies</li>
+      </ul>
+      <p class="mt-4">This system helped identify key conversion bottlenecks and detect fraudulent activities, resulting in a 25% improvement in conversion rates and 40% reduction in fraud.</p>
+    `,
+    image: "/placeholder.svg",
+    tags: ["Python", "Machine Learning", "Anomaly Detection", "Statistical Analysis", "Data Pipeline"],
     github: "https://github.com",
     demo: "https://demo.com"
   }
