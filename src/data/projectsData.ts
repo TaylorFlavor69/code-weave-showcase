@@ -1,3 +1,4 @@
+
 import { ProjectData } from '@/components/ProjectModal';
 
 export const projects: ProjectData[] = [
@@ -23,21 +24,41 @@ export const projects: ProjectData[] = [
   },
   {
     id: 6,
-    title: "Anomaly Detection & Customer Conversion Analysis",
-    shortDescription: "ML pipeline for detecting anomalies and analyzing customer conversion patterns",
+    title: "Anomaly Detection System",
+    shortDescription: "ML pipeline for real-time anomaly detection using isolation forests",
     fullDescription: `
-      <p>Built a comprehensive machine learning pipeline that combines anomaly detection with customer conversion analysis to identify unusual patterns and optimize conversion rates.</p>
+      <p>Built a comprehensive machine learning pipeline for real-time anomaly detection to identify unusual patterns in data streams and business operations.</p>
       <ul class="list-disc pl-6 space-y-2 mt-2">
         <li>Real-time anomaly detection using isolation forests and statistical methods</li>
-        <li>Customer journey mapping and conversion funnel analysis</li>
         <li>Feature engineering for behavioral pattern recognition</li>
-        <li>Interactive dashboards for business stakeholders</li>
+        <li>Interactive dashboards for monitoring anomalies</li>
         <li>Automated alerting system for critical anomalies</li>
+        <li>Scalable architecture for high-volume data processing</li>
       </ul>
-      <p class="mt-4">This system helped identify key conversion bottlenecks and detect fraudulent activities, resulting in a 25% improvement in conversion rates and 40% reduction in fraud.</p>
+      <p class="mt-4">This system helped identify fraudulent activities and operational issues, resulting in a 40% reduction in fraud and improved system reliability.</p>
     `,
     image: "/placeholder.svg",
     tags: ["Python", "Machine Learning", "Anomaly Detection", "Statistical Analysis", "Data Pipeline"],
+    github: "https://github.com",
+    demo: "https://demo.com"
+  },
+  {
+    id: 7,
+    title: "Customer Conversion Analysis",
+    shortDescription: "Advanced analytics platform for customer journey optimization",
+    fullDescription: `
+      <p>Developed an advanced analytics platform that analyzes customer conversion patterns and optimizes conversion rates through data-driven insights.</p>
+      <ul class="list-disc pl-6 space-y-2 mt-2">
+        <li>Customer journey mapping and conversion funnel analysis</li>
+        <li>Predictive modeling for conversion probability</li>
+        <li>A/B testing framework for optimization strategies</li>
+        <li>Interactive dashboards for business stakeholders</li>
+        <li>Automated recommendations for conversion optimization</li>
+      </ul>
+      <p class="mt-4">This platform helped identify key conversion bottlenecks and optimization opportunities, resulting in a 25% improvement in conversion rates.</p>
+    `,
+    image: "/placeholder.svg",
+    tags: ["Python", "Machine Learning", "Statistical Analysis", "Data Visualization", "A/B Testing"],
     github: "https://github.com",
     demo: "https://demo.com"
   }
