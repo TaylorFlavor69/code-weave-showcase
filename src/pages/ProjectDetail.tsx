@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Github, ExternalLink } from 'lucide-react';
@@ -142,6 +141,54 @@ const ProjectDetail: React.FC = () => {
         tags: ["Python", "Time Series", "Prophet", "LSTM", "Airflow"],
         github: "https://github.com",
         demo: "https://demo.com"
+      },
+      {
+        id: 5,
+        title: "Data Visualization AI Agent",
+        shortDescription: "Interactive AI-powered data analysis and visualization tool",
+        fullDescription: `
+          <p>A secure, interactive demo that uses PandasAI with OpenAI and Gemini models to answer questions about data and generate visualizations from natural language input.</p>
+          <ul class="list-disc pl-6 space-y-2 mt-2">
+            <li>Natural language query processing for data analysis</li>
+            <li>AI-powered chart and graph generation</li>
+            <li>Multiple dataset support with preview capabilities</li>
+            <li>Secure authentication and request limiting</li>
+            <li>Interactive visualization outputs</li>
+          </ul>
+          <p class="mt-4">This tool democratizes data analysis by allowing users to explore datasets using plain English queries.</p>
+          
+          <h3 class="text-xl font-semibold mt-8 mb-4">Technical Implementation</h3>
+          <p>The application leverages several cutting-edge technologies:</p>
+          <ol class="list-decimal pl-6 space-y-2 mt-2">
+            <li>PandasAI for intelligent data manipulation and analysis</li>
+            <li>OpenAI GPT-4 and Google Gemini for natural language understanding</li>
+            <li>Plotly and Matplotlib for dynamic visualization generation</li>
+            <li>FastAPI backend with secure authentication</li>
+          </ol>
+          
+          <h3 class="text-xl font-semibold mt-8 mb-4">Key Features</h3>
+          <p>The AI agent provides a comprehensive data analysis experience:</p>
+          <ul class="list-disc pl-6 space-y-2 mt-2">
+            <li>Multi-model AI support for enhanced query understanding</li>
+            <li>Interactive dataset explorer with live previews</li>
+            <li>Automatic chart type selection based on query intent</li>
+            <li>Request limiting and user session management</li>
+            <li>Responsive design for desktop and mobile use</li>
+          </ul>
+          
+          <h3 class="text-xl font-semibold mt-8 mb-4">Use Cases & Impact</h3>
+          <p>This tool has proven valuable across multiple domains:</p>
+          <ul class="list-disc pl-6 space-y-2 mt-2">
+            <li>Business analysts exploring sales and marketing data</li>
+            <li>Researchers analyzing scientific datasets</li>
+            <li>Students learning data analysis concepts</li>
+            <li>Non-technical users accessing data insights</li>
+          </ul>
+        `,
+        image: "/placeholder.svg",
+        tags: ["Python", "PandasAI", "OpenAI", "Gemini", "Data Visualization"],
+        github: "https://github.com",
+        demo: "/data-visualization-agent"
       }
     ];
 
@@ -226,10 +273,17 @@ const ProjectDetail: React.FC = () => {
           )}
           {project.demo && (
             <Button className="bg-electric text-charcoal hover:bg-white" asChild>
-              <a href={project.demo} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Live Demo
-              </a>
+              {project.demo.startsWith('/') ? (
+                <Link to={project.demo}>
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Try Live Demo
+                </Link>
+              ) : (
+                <a href={project.demo} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Live Demo
+                </a>
+              )}
             </Button>
           )}
         </div>
