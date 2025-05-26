@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, Brain, Database, Eye, EyeOff, HelpCircle, Github, Mail, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Brain, Database, Eye, EyeOff, Send, Bot, User, BarChart3, Table, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import AnimatedSection from '@/components/AnimatedSection';
 
 interface Dataset {
@@ -21,6 +21,17 @@ interface Dataset {
   preview: Record<string, any>[];
 }
 
+interface Message {
+  id: string;
+  type: 'user' | 'agent';
+  content: string;
+  timestamp: Date;
+  data?: {
+    type: 'table' | 'chart' | 'text';
+    content: any;
+  };
+}
+
 const DataVisualizationAgent: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
@@ -28,9 +39,9 @@ const DataVisualizationAgent: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedModel, setSelectedModel] = useState('');
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
-  const [query, setQuery] = useState('');
-  const [requestsRemaining, setRequestsRemaining] = useState(25);
-  const [isInspiration, setIsInspiration] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [currentMessage, setCurrentMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState('');
 
   const datasets: Dataset[] = [
@@ -44,8 +55,6 @@ const DataVisualizationAgent: React.FC = () => {
         { Date: '2024-01-15', Product: 'Laptop Pro', Category: 'Electronics', Region: 'North', Sales: 2500, Quantity: 5 },
         { Date: '2024-01-16', Product: 'Coffee Mug', Category: 'Home', Region: 'South', Sales: 15, Quantity: 3 },
         { Date: '2024-01-17', Product: 'Wireless Mouse', Category: 'Electronics', Region: 'East', Sales: 45, Quantity: 9 },
-        { Date: '2024-01-18', Product: 'Desk Chair', Category: 'Furniture', Region: 'West', Sales: 180, Quantity: 2 },
-        { Date: '2024-01-19', Product: 'Phone Case', Category: 'Accessories', Region: 'North', Sales: 25, Quantity: 7 }
       ]
     },
     {
@@ -58,8 +67,6 @@ const DataVisualizationAgent: React.FC = () => {
         { Date: '2024-01-01', City: 'New York', Temperature: 32, Humidity: 65, Precipitation: 0.2, WindSpeed: 8 },
         { Date: '2024-01-01', City: 'Los Angeles', Temperature: 68, Humidity: 45, Precipitation: 0, WindSpeed: 5 },
         { Date: '2024-01-01', City: 'Chicago', Temperature: 28, Humidity: 70, Precipitation: 0.5, WindSpeed: 12 },
-        { Date: '2024-01-01', City: 'Miami', Temperature: 75, Humidity: 80, Precipitation: 0.1, WindSpeed: 6 },
-        { Date: '2024-01-01', City: 'Seattle', Temperature: 45, Humidity: 85, Precipitation: 0.8, WindSpeed: 9 }
       ]
     },
     {
@@ -72,24 +79,11 @@ const DataVisualizationAgent: React.FC = () => {
         { Date: '2024-01-15', Symbol: 'AAPL', Open: 185.5, High: 187.2, Low: 184.8, Close: 186.9, Volume: 45000000 },
         { Date: '2024-01-15', Symbol: 'GOOGL', Open: 142.1, High: 143.8, Low: 141.5, Close: 143.2, Volume: 28000000 },
         { Date: '2024-01-15', Symbol: 'MSFT', Open: 375.2, High: 378.1, Low: 374.5, Close: 377.4, Volume: 32000000 },
-        { Date: '2024-01-15', Symbol: 'TSLA', Open: 248.5, High: 252.1, Low: 246.8, Close: 251.3, Volume: 65000000 },
-        { Date: '2024-01-15', Symbol: 'AMZN', Open: 156.8, High: 158.2, Low: 155.9, Close: 157.6, Volume: 38000000 }
       ]
     }
   ];
 
-  const inspirationQueries = [
-    "Show sales by country as a bar chart",
-    "What are the top 5 products by quantity sold?",
-    "Visualize monthly trends for revenue",
-    "Create a scatter plot of temperature vs humidity",
-    "Display the correlation matrix of all numeric columns",
-    "Show the distribution of sales amounts as a histogram",
-    "Compare sales performance across different regions"
-  ];
-
   const handleLogin = () => {
-    // Demo authentication - in a real app, this would be proper validation
     if (username.trim() && password.trim()) {
       if (username === 'demo' && password === 'demo123') {
         setIsAuthenticated(true);
@@ -102,13 +96,35 @@ const DataVisualizationAgent: React.FC = () => {
     }
   };
 
-  const handleRunQuery = () => {
-    if (query.trim() && selectedDataset && selectedModel) {
-      // Simulate query processing
-      setRequestsRemaining(prev => Math.max(0, prev - 1));
-      // Here you would integrate with PandasAI
-      console.log('Running query:', query, 'on dataset:', selectedDataset.title, 'with model:', selectedModel);
-    }
+  const handleSendMessage = () => {
+    if (!currentMessage.trim() || !selectedDataset || !selectedModel) return;
+
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      type: 'user',
+      content: currentMessage,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, newMessage]);
+    setCurrentMessage('');
+    setIsLoading(true);
+
+    // Simulate AI response
+    setTimeout(() => {
+      const response: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'agent',
+        content: `Based on your query about "${currentMessage}" using the ${selectedDataset.title} dataset with ${selectedModel}, here's what I found:`,
+        timestamp: new Date(),
+        data: {
+          type: 'table',
+          content: selectedDataset.preview.slice(0, 3)
+        }
+      };
+      setMessages(prev => [...prev, response]);
+      setIsLoading(false);
+    }, 2000);
   };
 
   if (!isAuthenticated) {
@@ -168,7 +184,7 @@ const DataVisualizationAgent: React.FC = () => {
                   Access Demo
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
-                  Limited access demo – each account is allowed up to 25 requests.
+                  Demo credentials: demo / demo123
                 </p>
               </CardContent>
             </Card>
@@ -179,205 +195,213 @@ const DataVisualizationAgent: React.FC = () => {
   }
 
   return (
-    <div className="bg-charcoal min-h-screen relative overflow-hidden">
-      {/* AI-themed background animation */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-electric rounded-full blur-xl animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-blue-500 rounded-full blur-lg animate-pulse delay-1000"></div>
-        <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-purple-500 rounded-full blur-2xl animate-pulse delay-2000"></div>
-        <div className="absolute bottom-20 right-1/3 w-28 h-28 bg-green-500 rounded-full blur-xl animate-pulse delay-500"></div>
-      </div>
-
-      <div className="relative z-10 container mx-auto px-4 py-12">
+    <div className="bg-charcoal min-h-screen">
+      <div className="container mx-auto px-4 py-12">
         <Link to="/#projects" className="inline-flex items-center text-electric hover:underline mb-8">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Projects
         </Link>
 
-        {/* Project Overview */}
-        <AnimatedSection className="mb-12">
-          <div className="text-center mb-8">
+        <AnimatedSection className="mb-8">
+          <div className="text-center">
             <h1 className="text-4xl font-bold mb-4">Data Visualization AI Agent</h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              A secure, interactive demo that uses PandasAI with OpenAI and Gemini models to answer questions about data and generate visualizations from natural language input.
+              Analyze data and create visualizations using natural language with AI-powered insights.
             </p>
           </div>
         </AnimatedSection>
 
-        {/* Request Counter */}
-        <div className="mb-6 text-center">
-          <Badge variant="outline" className="text-lg px-4 py-2">
-            Requests Remaining: {requestsRemaining}
-          </Badge>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Main Content */}
-          <div className="lg:col-span-3 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Configuration Panel */}
+          <div className="lg:col-span-1 space-y-6">
             {/* Model Selection */}
             <Card className="bg-secondary border-none">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Brain className="h-5 w-5 text-electric" />
-                  Model Selection
+                  AI Model
                 </CardTitle>
-                <p className="text-muted-foreground text-sm">Choose which AI model you'd like to use</p>
               </CardHeader>
               <CardContent>
                 <Select value={selectedModel} onValueChange={setSelectedModel}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select an AI model" />
+                    <SelectValue placeholder="Select AI model" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="openai-gpt4">OpenAI GPT-4</SelectItem>
-                    <SelectItem value="openai-gpt35">OpenAI GPT-3.5</SelectItem>
-                    <SelectItem value="gemini-pro">Google Gemini Pro</SelectItem>
-                    <SelectItem value="gemini-pro-vision">Google Gemini Pro Vision</SelectItem>
+                    <SelectItem value="gemini-25">Gemini 2.5</SelectItem>
                   </SelectContent>
                 </Select>
               </CardContent>
             </Card>
 
-            {/* Dataset Explorer */}
+            {/* Dataset Selection */}
             <Card className="bg-secondary border-none">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Database className="h-5 w-5 text-electric" />
-                  Dataset Explorer
+                  Dataset
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                  {datasets.map((dataset) => (
-                    <Card 
-                      key={dataset.id} 
-                      className={`cursor-pointer transition-all ${
-                        selectedDataset?.id === dataset.id 
-                          ? 'bg-electric/20 border-electric' 
-                          : 'bg-charcoal hover:bg-charcoal/80'
-                      }`}
-                      onClick={() => setSelectedDataset(dataset)}
-                    >
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-lg">{dataset.title}</CardTitle>
-                        <p className="text-sm text-muted-foreground">{dataset.description}</p>
-                        <div className="text-xs text-muted-foreground">
-                          {dataset.rows.toLocaleString()} rows • {dataset.columns.length} columns
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          <p className="text-xs font-medium">Sample Data:</p>
-                          <div className="text-xs space-y-1 max-h-24 overflow-y-auto">
-                            {dataset.preview.slice(0, 2).map((row, idx) => (
-                              <div key={idx} className="text-muted-foreground">
-                                {Object.entries(row).slice(0, 3).map(([key, value]) => (
-                                  <span key={key} className="mr-2">
-                                    {key}: {String(value)}
-                                  </span>
-                                ))}
-                              </div>
+              <CardContent className="space-y-4">
+                {datasets.map((dataset) => (
+                  <Card 
+                    key={dataset.id} 
+                    className={`cursor-pointer transition-all ${
+                      selectedDataset?.id === dataset.id 
+                        ? 'bg-electric/20 border-electric' 
+                        : 'bg-charcoal hover:bg-charcoal/80'
+                    }`}
+                    onClick={() => setSelectedDataset(dataset)}
+                  >
+                    <CardContent className="p-4">
+                      <h4 className="font-semibold mb-2">{dataset.title}</h4>
+                      <p className="text-sm text-muted-foreground mb-2">{dataset.description}</p>
+                      <div className="text-xs text-muted-foreground">
+                        {dataset.rows.toLocaleString()} rows • {dataset.columns.length} columns
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Dataset Summary */}
+            {selectedDataset && (
+              <Card className="bg-secondary border-none">
+                <CardHeader>
+                  <CardTitle className="text-lg">Dataset Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div>
+                      <h5 className="font-medium text-white">Columns:</h5>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {selectedDataset.columns.map((col, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs">{col}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h5 className="font-medium text-white">Sample Data:</h5>
+                      <div className="text-xs space-y-1 mt-2 max-h-32 overflow-y-auto">
+                        {selectedDataset.preview.slice(0, 2).map((row, idx) => (
+                          <div key={idx} className="text-muted-foreground">
+                            {Object.entries(row).slice(0, 3).map(([key, value]) => (
+                              <div key={key}>{key}: {String(value)}</div>
                             ))}
                           </div>
-                        </div>
-                        <Button 
-                          size="sm" 
-                          className="w-full mt-3"
-                          variant={selectedDataset?.id === dataset.id ? "default" : "outline"}
-                        >
-                          {selectedDataset?.id === dataset.id ? 'Selected' : 'Use this dataset'}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Ask a Question */}
-            <Card className="bg-secondary border-none">
-              <CardHeader>
-                <CardTitle>Ask a Question</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Textarea
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Ask a question about your data... e.g., 'Show me the sales trends by month'"
-                  rows={3}
-                />
-                <Button 
-                  onClick={handleRunQuery}
-                  disabled={!query.trim() || !selectedDataset || !selectedModel || requestsRemaining === 0}
-                  className="w-full bg-electric text-charcoal hover:bg-white"
-                >
-                  Run Query
-                </Button>
-                
-                {/* Output Area */}
-                <div className="min-h-[300px] bg-charcoal rounded-md p-4 border border-secondary">
-                  <p className="text-muted-foreground text-center">
-                    Query results and visualizations will appear here
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* FAQ/Inspiration Panel */}
-            <Card className="bg-secondary border-none">
+          {/* Chat Interface */}
+          <div className="lg:col-span-2">
+            <Card className="bg-secondary border-none h-[600px] flex flex-col">
               <CardHeader>
-                <Collapsible open={isInspiration} onOpenChange={setIsInspiration}>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" className="w-full justify-between p-0">
-                      <div className="flex items-center gap-2">
-                        <HelpCircle className="h-5 w-5 text-electric" />
-                        <span>Need Inspiration?</span>
-                      </div>
-                      {isInspiration ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="space-y-3 mt-4">
-                    <p className="text-sm text-muted-foreground mb-3">Try these example queries:</p>
-                    {inspirationQueries.map((example, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-start text-left h-auto py-2 px-3"
-                        onClick={() => setQuery(example)}
-                      >
-                        {example}
-                      </Button>
-                    ))}
-                  </CollapsibleContent>
-                </Collapsible>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-electric" />
+                  AI Chat
+                </CardTitle>
               </CardHeader>
+              <CardContent className="flex-1 flex flex-col">
+                {/* Messages */}
+                <ScrollArea className="flex-1 mb-4">
+                  <div className="space-y-4">
+                    {messages.length === 0 ? (
+                      <div className="text-center text-muted-foreground py-8">
+                        <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                        <p>Start a conversation by asking questions about your data!</p>
+                        <p className="text-sm mt-2">Try: "Show me sales by region" or "What are the trends?"</p>
+                      </div>
+                    ) : (
+                      messages.map((message) => (
+                        <div key={message.id} className={`flex gap-3 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`flex gap-3 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              message.type === 'user' ? 'bg-electric text-charcoal' : 'bg-purple-600 text-white'
+                            }`}>
+                              {message.type === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                            </div>
+                            <div className={`rounded-lg p-4 ${
+                              message.type === 'user' ? 'bg-electric text-charcoal' : 'bg-charcoal text-white'
+                            }`}>
+                              <p className="mb-2">{message.content}</p>
+                              {message.data && message.data.type === 'table' && (
+                                <div className="mt-3 p-3 bg-secondary/50 rounded">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Table className="h-4 w-4" />
+                                    <span className="text-sm font-medium">Data Table</span>
+                                  </div>
+                                  <div className="text-xs space-y-1 max-h-32 overflow-y-auto">
+                                    {message.data.content.map((row: any, idx: number) => (
+                                      <div key={idx} className="border-b border-secondary pb-1">
+                                        {Object.entries(row).map(([key, value]) => (
+                                          <span key={key} className="mr-3">{key}: {String(value)}</span>
+                                        ))}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                    {isLoading && (
+                      <div className="flex gap-3">
+                        <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center">
+                          <Bot className="h-4 w-4" />
+                        </div>
+                        <div className="bg-charcoal text-white rounded-lg p-4">
+                          <div className="flex items-center gap-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-electric"></div>
+                            <span>Analyzing data...</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
+
+                {/* Message Input */}
+                <div className="flex gap-2">
+                  <Textarea
+                    value={currentMessage}
+                    onChange={(e) => setCurrentMessage(e.target.value)}
+                    placeholder="Ask a question about your data..."
+                    className="flex-1 min-h-[50px] max-h-[100px]"
+                    disabled={!selectedDataset || !selectedModel}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
+                  />
+                  <Button 
+                    onClick={handleSendMessage}
+                    disabled={!currentMessage.trim() || !selectedDataset || !selectedModel || isLoading}
+                    className="bg-electric text-charcoal hover:bg-white"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                {(!selectedDataset || !selectedModel) && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Please select both an AI model and dataset to start chatting.
+                  </p>
+                )}
+              </CardContent>
             </Card>
           </div>
         </div>
-
-        {/* Footer */}
-        <footer className="mt-12 pt-8 border-t border-secondary/50 text-center">
-          <p className="text-muted-foreground mb-4">
-            Built with Python, PandasAI, OpenAI, Gemini, and a touch of imagination.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Button variant="outline" size="sm" asChild>
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-                <Github className="mr-2 h-4 w-4" />
-                GitHub Repo
-              </a>
-            </Button>
-            <Button variant="outline" size="sm" asChild>
-              <a href="mailto:contact@example.com">
-                <Mail className="mr-2 h-4 w-4" />
-                Contact
-              </a>
-            </Button>
-          </div>
-        </footer>
       </div>
     </div>
   );

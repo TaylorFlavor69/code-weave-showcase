@@ -3,7 +3,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ExternalLink, Github } from 'lucide-react';
 import { ProjectData } from './ProjectModal';
 
@@ -13,8 +13,22 @@ interface ProjectCardProps {
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, delay }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on buttons or links
+    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('a')) {
+      return;
+    }
+    navigate(`/project/${project.id}`);
+  };
+
   return (
-    <Card className="bg-secondary hover:bg-secondary/80 border-none h-full flex flex-col card-hover animate-fade-in-up" style={{ animationDelay: `${delay}ms` }}>
+    <Card 
+      className="bg-secondary hover:bg-secondary/80 border-none h-full flex flex-col card-hover animate-fade-in-up cursor-pointer" 
+      style={{ animationDelay: `${delay}ms` }}
+      onClick={handleCardClick}
+    >
       <CardHeader className="p-0">
         <div className="aspect-video overflow-hidden">
           <img 
