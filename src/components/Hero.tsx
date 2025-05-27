@@ -45,7 +45,7 @@ const Hero: React.FC = () => {
                 </a>
               </Button>
               <Button 
-                className="bg-secondary hover:bg-accent"
+                className="bg-teal text-charcoal hover:bg-teal/80"
                 size="lg"
               >
                 <a 
@@ -56,7 +56,7 @@ const Hero: React.FC = () => {
                 </a>
               </Button>
               <Button 
-                variant="outline"
+                className="bg-violet text-white hover:bg-violet/80"
                 size="lg"
               >
                 <a 
@@ -67,7 +67,7 @@ const Hero: React.FC = () => {
                 </a>
               </Button>
               <Button 
-                variant="outline"
+                className="bg-graphite text-white hover:bg-graphite/80 border border-electric"
                 size="lg"
               >
                 <a 
@@ -79,6 +79,7 @@ const Hero: React.FC = () => {
               </Button>
               <Button 
                 variant="outline"
+                className="border-2 border-electric text-electric hover:bg-electric hover:text-charcoal"
                 size="lg"
               >
                 <a 
