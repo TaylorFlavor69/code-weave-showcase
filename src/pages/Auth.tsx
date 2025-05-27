@@ -8,13 +8,14 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import DemoRequestDialog from '@/components/DemoRequestDialog';
 
 const Auth: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showDemoDialog, setShowDemoDialog] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -29,35 +30,22 @@ const Auth: React.FC = () => {
     checkAuth();
   }, [navigate]);
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
-        
-        toast({
-          title: "Welcome back!",
-          description: "You've been successfully logged in.",
-        });
-        navigate('/data-visualization-agent');
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-        if (error) throw error;
-        
-        toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account.",
-        });
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      
+      toast({
+        title: "Welcome back!",
+        description: "You've been successfully logged in.",
+      });
+      navigate('/data-visualization-agent');
     } catch (error: any) {
       toast({
         title: "Error",
@@ -83,14 +71,14 @@ const Auth: React.FC = () => {
                 <Brain className="h-8 w-8 text-electric" />
               </div>
               <CardTitle className="text-2xl text-white">
-                {isLogin ? 'Sign In' : 'Create Account'}
+                Sign In
               </CardTitle>
               <p className="text-muted-foreground mt-2">
-                {isLogin ? 'Welcome back to the Data Visualization AI Agent' : 'Join the Data Visualization AI Agent'}
+                Access the Data Visualization AI Agent
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
-              <form onSubmit={handleAuth} className="space-y-4">
+              <form onSubmit={handleSignIn} className="space-y-4">
                 <div>
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -129,23 +117,29 @@ const Auth: React.FC = () => {
                   className="w-full bg-electric text-charcoal hover:bg-white"
                   disabled={loading}
                 >
-                  {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+                  {loading ? 'Signing In...' : 'Sign In'}
                 </Button>
               </form>
               
-              <div className="text-center">
+              <div className="text-center border-t border-secondary pt-4">
+                <p className="text-muted-foreground mb-3">Don't have access?</p>
                 <Button
-                  variant="link"
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="text-electric hover:text-white"
+                  variant="outline"
+                  onClick={() => setShowDemoDialog(true)}
+                  className="w-full border-electric text-electric hover:bg-electric hover:text-charcoal"
                 >
-                  {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+                  Request Demo Login
                 </Button>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
+      
+      <DemoRequestDialog 
+        open={showDemoDialog} 
+        onOpenChange={setShowDemoDialog} 
+      />
     </div>
   );
 };
