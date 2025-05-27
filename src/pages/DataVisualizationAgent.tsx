@@ -1,15 +1,14 @@
-
-import React, { useState } from 'react';
-import { ArrowLeft, Brain, Database, Eye, EyeOff, Send, Bot, User, BarChart3, Table, MessageSquare } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Brain, Database, Send, Bot, User, BarChart3, Table, MessageSquare, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import AnimatedSection from '@/components/AnimatedSection';
 
 interface Dataset {
@@ -33,16 +32,15 @@ interface Message {
 }
 
 const DataVisualizationAgent: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [selectedModel, setSelectedModel] = useState('');
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [authError, setAuthError] = useState('');
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const datasets: Dataset[] = [
     {
@@ -83,17 +81,48 @@ const DataVisualizationAgent: React.FC = () => {
     }
   ];
 
-  const handleLogin = () => {
-    if (username.trim() && password.trim()) {
-      if (username === 'demo' && password === 'demo123') {
-        setIsAuthenticated(true);
-        setAuthError('');
-      } else {
-        setAuthError('Invalid credentials. Try demo/demo123');
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        navigate('/auth');
+        return;
       }
-    } else {
-      setAuthError('Please enter both username and password');
-    }
+
+      setUser(session.user);
+      
+      // Create or update user session
+      await supabase
+        .from('user_sessions')
+        .upsert({
+          user_id: session.user.id,
+          agent_type: 'data_visualization'
+        });
+
+      setLoading(false);
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === 'SIGNED_OUT' || !session) {
+          navigate('/auth');
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "Signed out",
+      description: "You've been successfully signed out.",
+    });
   };
 
   const handleSendMessage = () => {
@@ -127,69 +156,10 @@ const DataVisualizationAgent: React.FC = () => {
     }, 2000);
   };
 
-  if (!isAuthenticated) {
+  if (loading) {
     return (
-      <div className="bg-charcoal min-h-screen">
-        <div className="container mx-auto px-4 py-12">
-          <Link to="/#projects" className="inline-flex items-center text-electric hover:underline mb-8">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Projects
-          </Link>
-          
-          <div className="max-w-md mx-auto">
-            <Card className="bg-secondary border-none">
-              <CardHeader className="text-center">
-                <div className="mx-auto mb-4 w-16 h-16 bg-electric/20 rounded-full flex items-center justify-center">
-                  <Brain className="h-8 w-8 text-electric" />
-                </div>
-                <CardTitle className="text-2xl text-white">Data Visualization AI Agent</CardTitle>
-                <p className="text-muted-foreground mt-2">
-                  Secure demo access required
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter username"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter password"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                </div>
-                {authError && (
-                  <p className="text-red-400 text-sm">{authError}</p>
-                )}
-                <Button onClick={handleLogin} className="w-full bg-electric text-charcoal hover:bg-white">
-                  Access Demo
-                </Button>
-                <p className="text-xs text-muted-foreground text-center">
-                  Demo credentials: demo / demo123
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+      <div className="bg-charcoal min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-electric"></div>
       </div>
     );
   }
@@ -197,9 +167,24 @@ const DataVisualizationAgent: React.FC = () => {
   return (
     <div className="bg-charcoal min-h-screen">
       <div className="container mx-auto px-4 py-12">
-        <Link to="/#projects" className="inline-flex items-center text-electric hover:underline mb-8">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Projects
-        </Link>
+        <div className="flex justify-between items-center mb-8">
+          <Link to="/#projects" className="inline-flex items-center text-electric hover:underline">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Projects
+          </Link>
+          
+          <div className="flex items-center gap-4">
+            <span className="text-muted-foreground">Welcome, {user?.email}</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSignOut}
+              className="flex items-center gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
+        </div>
 
         <AnimatedSection className="mb-8">
           <div className="text-center">
