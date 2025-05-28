@@ -1,4 +1,5 @@
-import { supabase } from './supabase'
+
+import { supabase } from '@/integrations/supabase/client'
 
 export interface AnalysisResult {
   text: string
@@ -19,24 +20,19 @@ export const analyzeData = async (
     throw new Error('User must be authenticated')
   }
 
-  const response = await fetch('/api/analyze', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+  const { data, error } = await supabase.functions.invoke('analyze-data', {
+    body: {
       query,
       dataset,
       userId: user.id,
-    }),
+    },
   })
 
-  if (!response.ok) {
-    const error = await response.json()
+  if (error) {
     throw new Error(error.message || 'Failed to analyze data')
   }
 
-  return response.json()
+  return data
 }
 
 export const getQueryCount = async (): Promise<number> => {
@@ -50,15 +46,11 @@ export const getQueryCount = async (): Promise<number> => {
     .from('user_queries')
     .select('count')
     .eq('user_id', user.id)
-    .single()
+    .maybeSingle()
 
   if (error) {
-    if (error.code === 'PGRST116') {
-      // No record found, user hasn't made any queries yet
-      return 0
-    }
     throw error
   }
 
-  return data.count
-} 
+  return data?.count || 0
+}
