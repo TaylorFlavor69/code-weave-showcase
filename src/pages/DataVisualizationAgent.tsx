@@ -516,28 +516,32 @@ const DataVisualizationAgent: React.FC = () => {
                     <ScrollArea className="w-full">
                       <div className="min-w-max">
                         {selectedDataset.preview.length > 0 ? (
-                          <TableComponent>
-                            <TableHeader>
-                              <TableRow>
-                                {Object.keys(selectedDataset.preview[0]).map((column) => (
-                                  <TableHead key={column} className="text-electric font-medium whitespace-nowrap">
-                                    {column}
-                                  </TableHead>
-                                ))}
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {selectedDataset.preview.map((row, idx) => (
-                                <TableRow key={idx}>
+                          <div className="overflow-x-auto">
+                            <TableComponent>
+                              <TableHeader>
+                                <TableRow>
                                   {Object.keys(selectedDataset.preview[0]).map((column) => (
-                                    <TableCell key={column} className="text-white whitespace-nowrap">
-                                      {String(row[column] || '-')}
-                                    </TableCell>
+                                    <TableHead key={column} className="text-electric font-medium whitespace-nowrap min-w-[120px]">
+                                      {column}
+                                    </TableHead>
                                   ))}
                                 </TableRow>
-                              ))}
-                            </TableBody>
-                          </TableComponent>
+                              </TableHeader>
+                              <TableBody>
+                                {selectedDataset.preview.map((row, idx) => (
+                                  <TableRow key={idx}>
+                                    {Object.keys(selectedDataset.preview[0]).map((column) => (
+                                      <TableCell key={column} className="text-white whitespace-nowrap min-w-[120px] max-w-[200px] truncate">
+                                        <span title={String(row[column] || '-')}>
+                                          {String(row[column] || '-')}
+                                        </span>
+                                      </TableCell>
+                                    ))}
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </TableComponent>
+                          </div>
                         ) : (
                           <div className="text-white text-center py-8">
                             <p>No data available for preview</p>
