@@ -60,55 +60,51 @@ const DataVisualizationAgent: React.FC = () => {
 
   const fetchDatasetPreview = async (datasetId: string, limit: number = 5) => {
     try {
-      console.log(`Fetching preview for dataset: ${datasetId}`);
       const tableName = getTableName(datasetId);
-      console.log(`Using table name: ${tableName}`);
       
       const { data, error } = await supabase
         .from(tableName)
         .select('*')
         .limit(limit);
       
-      console.log(`Preview data for ${tableName}:`, data);
-      console.log(`Preview error for ${tableName}:`, error);
-      
       if (error) {
-        console.error(`Error fetching ${datasetId} preview:`, error);
-        throw error;
+        console.error(`Preview fetch error:`, error.message);
+        toast({
+          title: "Data Access Error",
+          description: `Failed to fetch preview data. Please check your permissions.`,
+          variant: "destructive"
+        });
+        return [];
       }
+      
       return data || [];
     } catch (error) {
-      console.error(`Error fetching ${datasetId} preview:`, error);
+      console.error(`Preview fetch exception:`, error);
       return [];
     }
   };
 
   const fetchDatasetCount = async (datasetId: string) => {
     try {
-      console.log(`Fetching count for dataset: ${datasetId}`);
       const tableName = getTableName(datasetId);
-      console.log(`Using table name for count: ${tableName}`);
       
       const { count, error } = await supabase
         .from(tableName)
         .select('*', { count: 'exact', head: true });
       
-      console.log(`Count for ${tableName}:`, count);
-      console.log(`Count error for ${tableName}:`, error);
-      
       if (error) {
-        console.error(`Error fetching ${datasetId} count:`, error);
-        throw error;
+        console.error(`Count fetch error:`, error.message);
+        return 0;
       }
+      
       return count || 0;
     } catch (error) {
-      console.error(`Error fetching ${datasetId} count:`, error);
+      console.error(`Count fetch exception:`, error);
       return 0;
     }
   };
 
   const initializeDatasets = async () => {
-    console.log('Initializing datasets...');
     const baseDatasets = [
       {
         id: 'CustomerExperience',
@@ -132,13 +128,10 @@ const DataVisualizationAgent: React.FC = () => {
 
     const datasetsWithData = await Promise.all(
       baseDatasets.map(async (dataset) => {
-        console.log(`Processing dataset: ${dataset.id}`);
         const [preview, count] = await Promise.all([
           fetchDatasetPreview(dataset.id),
           fetchDatasetCount(dataset.id)
         ]);
-
-        console.log(`Dataset ${dataset.id} - Preview:`, preview, 'Count:', count);
 
         return {
           ...dataset,
@@ -148,8 +141,17 @@ const DataVisualizationAgent: React.FC = () => {
       })
     );
 
-    console.log('Final datasets with data:', datasetsWithData);
     setDatasets(datasetsWithData);
+
+    // Check if we have any data at all
+    const totalRecords = datasetsWithData.reduce((sum, dataset) => sum + dataset.rows, 0);
+    if (totalRecords === 0) {
+      toast({
+        title: "No Data Available",
+        description: "No records were found in any dataset. Please check data access permissions.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getSampleQuestions = (datasetId: string) => {
@@ -181,16 +183,13 @@ const DataVisualizationAgent: React.FC = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      console.log('Checking authentication...');
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        console.log('No session found, redirecting to auth');
         navigate('/auth');
         return;
       }
 
-      console.log('Session found:', session.user);
       setUser(session.user);
       
       // Create or update user session
@@ -358,7 +357,11 @@ const DataVisualizationAgent: React.FC = () => {
                       <h4 className="font-semibold mb-2">{dataset.title}</h4>
                       <p className="text-sm text-muted-foreground mb-2">{dataset.description}</p>
                       <div className="text-xs text-muted-foreground">
-                        {dataset.rows.toLocaleString()} rows • {dataset.columns.length} columns
+                        {dataset.rows === 0 ? (
+                          <span className="text-yellow-500">No data available</span>
+                        ) : (
+                          `${dataset.rows.toLocaleString()} rows • ${dataset.columns.length} columns`
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -444,7 +447,7 @@ const DataVisualizationAgent: React.FC = () => {
                     onChange={(e) => setCurrentMessage(e.target.value)}
                     placeholder="Ask a question about your data..."
                     className="flex-1 min-h-[50px] max-h-[100px]"
-                    disabled={!selectedDataset}
+                    disabled={!selectedDataset || selectedDataset.rows === 0}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
@@ -454,7 +457,7 @@ const DataVisualizationAgent: React.FC = () => {
                   />
                   <Button 
                     onClick={handleSendMessage}
-                    disabled={!currentMessage.trim() || !selectedDataset || isLoading}
+                    disabled={!currentMessage.trim() || !selectedDataset || isLoading || selectedDataset.rows === 0}
                     className="bg-electric text-charcoal hover:bg-white"
                   >
                     <Send className="h-4 w-4" />
@@ -464,6 +467,11 @@ const DataVisualizationAgent: React.FC = () => {
                 {!selectedDataset && (
                   <p className="text-xs text-muted-foreground mt-2">
                     Please select a dataset to start chatting.
+                  </p>
+                )}
+                {selectedDataset && selectedDataset.rows === 0 && (
+                  <p className="text-xs text-yellow-500 mt-2">
+                    This dataset has no available data. Please check data access permissions.
                   </p>
                 )}
               </CardContent>
@@ -533,7 +541,7 @@ const DataVisualizationAgent: React.FC = () => {
                         ) : (
                           <div className="text-white text-center py-8">
                             <p>No data available for preview</p>
-                            <p className="text-sm text-muted-foreground mt-2">This might indicate a data access issue</p>
+                            <p className="text-sm text-muted-foreground mt-2">Please check data access permissions or contact support</p>
                           </div>
                         )}
                       </div>
@@ -542,27 +550,29 @@ const DataVisualizationAgent: React.FC = () => {
                 </div>
 
                 {/* Sample Questions */}
-                <div>
-                  <h4 className="font-medium text-white mb-3 flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4" />
-                    Try These Questions
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {getSampleQuestions(selectedDataset.id).map((question, idx) => (
-                      <Button
-                        key={idx}
-                        variant="outline"
-                        className="text-left justify-start p-3 h-auto bg-charcoal hover:bg-charcoal/80 border-muted text-white hover:text-electric transition-colors"
-                        onClick={() => setCurrentMessage(question)}
-                      >
-                        <div className="flex items-start gap-2 w-full">
-                          <ChevronRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-electric" />
-                          <span className="text-sm leading-relaxed">{question}</span>
-                        </div>
-                      </Button>
-                    ))}
+                {selectedDataset.rows > 0 && (
+                  <div>
+                    <h4 className="font-medium text-white mb-3 flex items-center gap-2">
+                      <MessageSquare className="h-4 w-4" />
+                      Try These Questions
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {getSampleQuestions(selectedDataset.id).map((question, idx) => (
+                        <Button
+                          key={idx}
+                          variant="outline"
+                          className="text-left justify-start p-3 h-auto bg-charcoal hover:bg-charcoal/80 border-muted text-white hover:text-electric transition-colors"
+                          onClick={() => setCurrentMessage(question)}
+                        >
+                          <div className="flex items-start gap-2 w-full">
+                            <ChevronRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-electric" />
+                            <span className="text-sm leading-relaxed">{question}</span>
+                          </div>
+                        </Button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </div>
