@@ -60,13 +60,22 @@ const DataVisualizationAgent: React.FC = () => {
 
   const fetchDatasetPreview = async (datasetId: string, limit: number = 5) => {
     try {
+      console.log(`Fetching preview for dataset: ${datasetId}`);
       const tableName = getTableName(datasetId);
+      console.log(`Using table name: ${tableName}`);
+      
       const { data, error } = await supabase
         .from(tableName)
         .select('*')
         .limit(limit);
       
-      if (error) throw error;
+      console.log(`Preview data for ${tableName}:`, data);
+      console.log(`Preview error for ${tableName}:`, error);
+      
+      if (error) {
+        console.error(`Error fetching ${datasetId} preview:`, error);
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error(`Error fetching ${datasetId} preview:`, error);
@@ -76,12 +85,21 @@ const DataVisualizationAgent: React.FC = () => {
 
   const fetchDatasetCount = async (datasetId: string) => {
     try {
+      console.log(`Fetching count for dataset: ${datasetId}`);
       const tableName = getTableName(datasetId);
+      console.log(`Using table name for count: ${tableName}`);
+      
       const { count, error } = await supabase
         .from(tableName)
         .select('*', { count: 'exact', head: true });
       
-      if (error) throw error;
+      console.log(`Count for ${tableName}:`, count);
+      console.log(`Count error for ${tableName}:`, error);
+      
+      if (error) {
+        console.error(`Error fetching ${datasetId} count:`, error);
+        throw error;
+      }
       return count || 0;
     } catch (error) {
       console.error(`Error fetching ${datasetId} count:`, error);
@@ -90,6 +108,7 @@ const DataVisualizationAgent: React.FC = () => {
   };
 
   const initializeDatasets = async () => {
+    console.log('Initializing datasets...');
     const baseDatasets = [
       {
         id: 'CustomerExperience',
@@ -113,10 +132,13 @@ const DataVisualizationAgent: React.FC = () => {
 
     const datasetsWithData = await Promise.all(
       baseDatasets.map(async (dataset) => {
+        console.log(`Processing dataset: ${dataset.id}`);
         const [preview, count] = await Promise.all([
           fetchDatasetPreview(dataset.id),
           fetchDatasetCount(dataset.id)
         ]);
+
+        console.log(`Dataset ${dataset.id} - Preview:`, preview, 'Count:', count);
 
         return {
           ...dataset,
@@ -126,6 +148,7 @@ const DataVisualizationAgent: React.FC = () => {
       })
     );
 
+    console.log('Final datasets with data:', datasetsWithData);
     setDatasets(datasetsWithData);
   };
 
@@ -158,13 +181,16 @@ const DataVisualizationAgent: React.FC = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
+      console.log('Checking authentication...');
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
+        console.log('No session found, redirecting to auth');
         navigate('/auth');
         return;
       }
 
+      console.log('Session found:', session.user);
       setUser(session.user);
       
       // Create or update user session
@@ -481,28 +507,35 @@ const DataVisualizationAgent: React.FC = () => {
                   <div className="bg-charcoal rounded-lg p-4">
                     <ScrollArea className="w-full">
                       <div className="min-w-max">
-                        <TableComponent>
-                          <TableHeader>
-                            <TableRow>
-                              {selectedDataset.columns.map((column) => (
-                                <TableHead key={column} className="text-electric font-medium whitespace-nowrap">
-                                  {column}
-                                </TableHead>
-                              ))}
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {selectedDataset.preview.map((row, idx) => (
-                              <TableRow key={idx}>
-                                {selectedDataset.columns.map((column) => (
-                                  <TableCell key={column} className="text-white whitespace-nowrap">
-                                    {String(row[column] || '-')}
-                                  </TableCell>
+                        {selectedDataset.preview.length > 0 ? (
+                          <TableComponent>
+                            <TableHeader>
+                              <TableRow>
+                                {Object.keys(selectedDataset.preview[0]).map((column) => (
+                                  <TableHead key={column} className="text-electric font-medium whitespace-nowrap">
+                                    {column}
+                                  </TableHead>
                                 ))}
                               </TableRow>
-                            ))}
-                          </TableBody>
-                        </TableComponent>
+                            </TableHeader>
+                            <TableBody>
+                              {selectedDataset.preview.map((row, idx) => (
+                                <TableRow key={idx}>
+                                  {Object.keys(selectedDataset.preview[0]).map((column) => (
+                                    <TableCell key={column} className="text-white whitespace-nowrap">
+                                      {String(row[column] || '-')}
+                                    </TableCell>
+                                  ))}
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </TableComponent>
+                        ) : (
+                          <div className="text-white text-center py-8">
+                            <p>No data available for preview</p>
+                            <p className="text-sm text-muted-foreground mt-2">This might indicate a data access issue</p>
+                          </div>
+                        )}
                       </div>
                     </ScrollArea>
                   </div>
