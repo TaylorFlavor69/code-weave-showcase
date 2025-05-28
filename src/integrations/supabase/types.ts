@@ -174,6 +174,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_queries: {
+        Row: {
+          count: number
+          created_at: string
+          id: string
+          last_query: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          count?: number
+          created_at?: string
+          id?: string
+          last_query?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          count?: number
+          created_at?: string
+          id?: string
+          last_query?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_sessions: {
         Row: {
           agent_type: string
