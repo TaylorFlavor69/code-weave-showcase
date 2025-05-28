@@ -513,35 +513,33 @@ const DataVisualizationAgent: React.FC = () => {
                     Sample Data (First 5 Records)
                   </h4>
                   <div className="bg-charcoal rounded-lg p-4">
-                    <ScrollArea className="w-full">
-                      <div className="min-w-max">
+                    <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+                      <div className="w-max">
                         {selectedDataset.preview.length > 0 ? (
-                          <div className="overflow-x-auto">
-                            <TableComponent>
-                              <TableHeader>
-                                <TableRow>
+                          <TableComponent>
+                            <TableHeader>
+                              <TableRow>
+                                {Object.keys(selectedDataset.preview[0]).map((column) => (
+                                  <TableHead key={column} className="text-electric font-medium whitespace-nowrap min-w-[120px]">
+                                    {column}
+                                  </TableHead>
+                                ))}
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {selectedDataset.preview.map((row, idx) => (
+                                <TableRow key={idx}>
                                   {Object.keys(selectedDataset.preview[0]).map((column) => (
-                                    <TableHead key={column} className="text-electric font-medium whitespace-nowrap min-w-[120px]">
-                                      {column}
-                                    </TableHead>
+                                    <TableCell key={column} className="text-white whitespace-nowrap min-w-[120px] max-w-[200px] truncate">
+                                      <span title={String(row[column] || '-')}>
+                                        {String(row[column] || '-')}
+                                      </span>
+                                    </TableCell>
                                   ))}
                                 </TableRow>
-                              </TableHeader>
-                              <TableBody>
-                                {selectedDataset.preview.map((row, idx) => (
-                                  <TableRow key={idx}>
-                                    {Object.keys(selectedDataset.preview[0]).map((column) => (
-                                      <TableCell key={column} className="text-white whitespace-nowrap min-w-[120px] max-w-[200px] truncate">
-                                        <span title={String(row[column] || '-')}>
-                                          {String(row[column] || '-')}
-                                        </span>
-                                      </TableCell>
-                                    ))}
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </TableComponent>
-                          </div>
+                              ))}
+                            </TableBody>
+                          </TableComponent>
                         ) : (
                           <div className="text-white text-center py-8">
                             <p>No data available for preview</p>
@@ -549,6 +547,7 @@ const DataVisualizationAgent: React.FC = () => {
                           </div>
                         )}
                       </div>
+                      <ScrollBar orientation="horizontal" />
                     </ScrollArea>
                   </div>
                 </div>
