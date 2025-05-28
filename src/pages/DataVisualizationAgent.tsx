@@ -32,6 +32,8 @@ interface Message {
   };
 }
 
+type TableName = 'CustomerExperience' | 'SuccessEducationBackground' | 'PokemonData';
+
 const DataVisualizationAgent: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -43,16 +45,27 @@ const DataVisualizationAgent: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const getTableName = (datasetId: string): TableName => {
+    switch (datasetId) {
+      case 'pokemon':
+        return 'PokemonData';
+      case 'CustomerExperience':
+        return 'CustomerExperience';
+      case 'SuccessEducationBackground':
+        return 'SuccessEducationBackground';
+      default:
+        return 'CustomerExperience';
+    }
+  };
+
   const fetchDatasetPreview = async (datasetId: string, limit: number = 5) => {
     try {
-      let query;
-      if (datasetId === 'pokemon') {
-        query = supabase.from('PokemonData').select('*').limit(limit);
-      } else {
-        query = supabase.from(datasetId).select('*').limit(limit);
-      }
+      const tableName = getTableName(datasetId);
+      const { data, error } = await supabase
+        .from(tableName)
+        .select('*')
+        .limit(limit);
       
-      const { data, error } = await query;
       if (error) throw error;
       return data || [];
     } catch (error) {
@@ -63,7 +76,7 @@ const DataVisualizationAgent: React.FC = () => {
 
   const fetchDatasetCount = async (datasetId: string) => {
     try {
-      const tableName = datasetId === 'pokemon' ? 'PokemonData' : datasetId;
+      const tableName = getTableName(datasetId);
       const { count, error } = await supabase
         .from(tableName)
         .select('*', { count: 'exact', head: true });
