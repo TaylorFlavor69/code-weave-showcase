@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Brain, Database, Send, Bot, User, BarChart3, Table, MessageSquare, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -5,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -34,7 +34,6 @@ interface Message {
 const DataVisualizationAgent: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedModel, setSelectedModel] = useState('');
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
@@ -44,39 +43,39 @@ const DataVisualizationAgent: React.FC = () => {
 
   const datasets: Dataset[] = [
     {
-      id: 'sales',
-      title: 'E-commerce Sales Data',
-      description: 'Monthly sales data across different product categories and regions',
-      rows: 1200,
-      columns: ['Date', 'Product', 'Category', 'Region', 'Sales', 'Quantity'],
+      id: 'CustomerExperience',
+      title: 'Customer Experience Analytics',
+      description: 'Customer satisfaction and retention data with demographics, interactions, and feedback scores',
+      rows: 1500,
+      columns: ['Customer_ID', 'Age', 'Gender', 'Location', 'Satisfaction_Score', 'Feedback_Score', 'Products_Purchased', 'Products_Viewed', 'Time_Spent_on_Site', 'Num_Interactions', 'Retention_Status'],
       preview: [
-        { Date: '2024-01-15', Product: 'Laptop Pro', Category: 'Electronics', Region: 'North', Sales: 2500, Quantity: 5 },
-        { Date: '2024-01-16', Product: 'Coffee Mug', Category: 'Home', Region: 'South', Sales: 15, Quantity: 3 },
-        { Date: '2024-01-17', Product: 'Wireless Mouse', Category: 'Electronics', Region: 'East', Sales: 45, Quantity: 9 },
+        { Customer_ID: 1001, Age: 35, Gender: 'Female', Location: 'New York', Satisfaction_Score: 8, Feedback_Score: 7, Products_Purchased: 3, Retention_Status: 'Active' },
+        { Customer_ID: 1002, Age: 42, Gender: 'Male', Location: 'California', Satisfaction_Score: 9, Feedback_Score: 8, Products_Purchased: 5, Retention_Status: 'Active' },
+        { Customer_ID: 1003, Age: 28, Gender: 'Female', Location: 'Texas', Satisfaction_Score: 6, Feedback_Score: 5, Products_Purchased: 1, Retention_Status: 'Churned' },
       ]
     },
     {
-      id: 'weather',
-      title: 'Weather Patterns',
-      description: 'Historical weather data with temperature, humidity, and precipitation',
-      rows: 3650,
-      columns: ['Date', 'City', 'Temperature', 'Humidity', 'Precipitation', 'WindSpeed'],
+      id: 'SuccessEducationBackground',
+      title: 'Success & Education Analysis',
+      description: 'Educational backgrounds and career success metrics of professionals across various fields',
+      rows: 2200,
+      columns: ['Name', 'Degree', 'Field', 'Institution', 'Graduation Year', 'Country', 'University Global Ranking', 'GPA (or Equivalent)', 'Scholarship/Award', 'Profession'],
       preview: [
-        { Date: '2024-01-01', City: 'New York', Temperature: 32, Humidity: 65, Precipitation: 0.2, WindSpeed: 8 },
-        { Date: '2024-01-01', City: 'Los Angeles', Temperature: 68, Humidity: 45, Precipitation: 0, WindSpeed: 5 },
-        { Date: '2024-01-01', City: 'Chicago', Temperature: 28, Humidity: 70, Precipitation: 0.5, WindSpeed: 12 },
+        { Name: 'John Smith', Degree: 'MBA', Field: 'Business', Institution: 'Harvard', Graduation_Year: '2018', Country: 'USA', Profession: 'CEO' },
+        { Name: 'Sarah Johnson', Degree: 'PhD', Field: 'Computer Science', Institution: 'MIT', Graduation_Year: '2020', Country: 'USA', Profession: 'CTO' },
+        { Name: 'Mike Chen', Degree: 'MS', Field: 'Engineering', Institution: 'Stanford', Graduation_Year: '2019', Country: 'USA', Profession: 'VP Engineering' },
       ]
     },
     {
-      id: 'stocks',
-      title: 'Stock Market Data',
-      description: 'Daily stock prices and trading volumes for major companies',
-      rows: 2500,
-      columns: ['Date', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Volume'],
+      id: 'PokemonData',
+      title: 'Pokémon Battle Analytics',
+      description: 'Comprehensive Pokémon statistics including battle data, stats, types, and performance metrics',
+      rows: 800,
+      columns: ['#', 'Name', 'Type 1', 'Type 2', 'HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed', 'Generation', 'Legendary', 'height', 'weight', 'base_experience'],
       preview: [
-        { Date: '2024-01-15', Symbol: 'AAPL', Open: 185.5, High: 187.2, Low: 184.8, Close: 186.9, Volume: 45000000 },
-        { Date: '2024-01-15', Symbol: 'GOOGL', Open: 142.1, High: 143.8, Low: 141.5, Close: 143.2, Volume: 28000000 },
-        { Date: '2024-01-15', Symbol: 'MSFT', Open: 375.2, High: 378.1, Low: 374.5, Close: 377.4, Volume: 32000000 },
+        { '#': 1, Name: 'Bulbasaur', 'Type 1': 'Grass', 'Type 2': 'Poison', HP: 45, Attack: 49, Defense: 49, Generation: 1, Legendary: false },
+        { '#': 4, Name: 'Charmander', 'Type 1': 'Fire', 'Type 2': null, HP: 39, Attack: 52, Defense: 43, Generation: 1, Legendary: false },
+        { '#': 7, Name: 'Squirtle', 'Type 1': 'Water', 'Type 2': null, HP: 44, Attack: 48, Defense: 65, Generation: 1, Legendary: false },
       ]
     }
   ];
@@ -126,7 +125,7 @@ const DataVisualizationAgent: React.FC = () => {
   };
 
   const handleSendMessage = () => {
-    if (!currentMessage.trim() || !selectedDataset || !selectedModel) return;
+    if (!currentMessage.trim() || !selectedDataset) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
@@ -144,7 +143,7 @@ const DataVisualizationAgent: React.FC = () => {
       const response: Message = {
         id: (Date.now() + 1).toString(),
         type: 'agent',
-        content: `Based on your query about "${currentMessage}" using the ${selectedDataset.title} dataset with ${selectedModel}, here's what I found:`,
+        content: `Based on your query about "${currentMessage}" using the ${selectedDataset.title} dataset with OpenAI GPT-4, here's what I found:`,
         timestamp: new Date(),
         data: {
           type: 'table',
@@ -198,7 +197,7 @@ const DataVisualizationAgent: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Configuration Panel */}
           <div className="lg:col-span-1 space-y-6">
-            {/* Model Selection */}
+            {/* AI Model Display */}
             <Card className="bg-secondary border-none">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -207,15 +206,10 @@ const DataVisualizationAgent: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Select value={selectedModel} onValueChange={setSelectedModel}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select AI model" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="openai-gpt4">OpenAI GPT-4</SelectItem>
-                    <SelectItem value="gemini-25">Gemini 2.5</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center gap-2 p-3 bg-charcoal rounded-lg">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="font-medium">OpenAI GPT-4</span>
+                </div>
               </CardContent>
             </Card>
 
@@ -301,7 +295,7 @@ const DataVisualizationAgent: React.FC = () => {
                       <div className="text-center text-muted-foreground py-8">
                         <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
                         <p>Start a conversation by asking questions about your data!</p>
-                        <p className="text-sm mt-2">Try: "Show me sales by region" or "What are the trends?"</p>
+                        <p className="text-sm mt-2">Try: "Show me customer satisfaction by region" or "What are the education trends?"</p>
                       </div>
                     ) : (
                       messages.map((message) => (
@@ -361,7 +355,7 @@ const DataVisualizationAgent: React.FC = () => {
                     onChange={(e) => setCurrentMessage(e.target.value)}
                     placeholder="Ask a question about your data..."
                     className="flex-1 min-h-[50px] max-h-[100px]"
-                    disabled={!selectedDataset || !selectedModel}
+                    disabled={!selectedDataset}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
@@ -371,16 +365,16 @@ const DataVisualizationAgent: React.FC = () => {
                   />
                   <Button 
                     onClick={handleSendMessage}
-                    disabled={!currentMessage.trim() || !selectedDataset || !selectedModel || isLoading}
+                    disabled={!currentMessage.trim() || !selectedDataset || isLoading}
                     className="bg-electric text-charcoal hover:bg-white"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
                 
-                {(!selectedDataset || !selectedModel) && (
+                {!selectedDataset && (
                   <p className="text-xs text-muted-foreground mt-2">
-                    Please select both an AI model and dataset to start chatting.
+                    Please select a dataset to start chatting.
                   </p>
                 )}
               </CardContent>
