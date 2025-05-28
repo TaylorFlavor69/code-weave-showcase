@@ -9,6 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table as TableComponent, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { analyzeData } from '@/lib/services/dataAnalysis';
 import AnimatedSection from '@/components/AnimatedSection';
 
 interface Dataset {
@@ -35,50 +36,85 @@ const DataVisualizationAgent: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
+  const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const datasets: Dataset[] = [
-    {
-      id: 'CustomerExperience',
-      title: 'Customer Experience Analytics',
-      description: 'Customer satisfaction and retention data with demographics, interactions, and feedback scores',
-      rows: 1500,
-      columns: ['Customer_ID', 'Age', 'Gender', 'Location', 'Satisfaction_Score', 'Feedback_Score', 'Products_Purchased', 'Products_Viewed', 'Time_Spent_on_Site', 'Num_Interactions', 'Retention_Status'],
-      preview: [
-        { Customer_ID: 1001, Age: 35, Gender: 'Female', Location: 'New York', Satisfaction_Score: 8, Feedback_Score: 7, Products_Purchased: 3, Retention_Status: 'Active' },
-        { Customer_ID: 1002, Age: 42, Gender: 'Male', Location: 'California', Satisfaction_Score: 9, Feedback_Score: 8, Products_Purchased: 5, Retention_Status: 'Active' },
-        { Customer_ID: 1003, Age: 28, Gender: 'Female', Location: 'Texas', Satisfaction_Score: 6, Feedback_Score: 5, Products_Purchased: 1, Retention_Status: 'Churned' },
-      ]
-    },
-    {
-      id: 'SuccessEducationBackground',
-      title: 'Success & Education Analysis',
-      description: 'Educational backgrounds and career success metrics of professionals across various fields',
-      rows: 2200,
-      columns: ['Name', 'Degree', 'Field', 'Institution', 'Graduation Year', 'Country', 'University Global Ranking', 'GPA (or Equivalent)', 'Scholarship/Award', 'Profession'],
-      preview: [
-        { Name: 'John Smith', Degree: 'MBA', Field: 'Business', Institution: 'Harvard', Graduation_Year: '2018', Country: 'USA', Profession: 'CEO' },
-        { Name: 'Sarah Johnson', Degree: 'PhD', Field: 'Computer Science', Institution: 'MIT', Graduation_Year: '2020', Country: 'USA', Profession: 'CTO' },
-        { Name: 'Mike Chen', Degree: 'MS', Field: 'Engineering', Institution: 'Stanford', Graduation_Year: '2019', Country: 'USA', Profession: 'VP Engineering' },
-      ]
-    },
-    {
-      id: 'PokemonData',
-      title: 'Pokémon Battle Analytics',
-      description: 'Comprehensive Pokémon statistics including battle data, stats, types, and performance metrics',
-      rows: 800,
-      columns: ['#', 'Name', 'Type 1', 'Type 2', 'HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed', 'Generation', 'Legendary', 'height', 'weight', 'base_experience'],
-      preview: [
-        { '#': 1, Name: 'Bulbasaur', 'Type 1': 'Grass', 'Type 2': 'Poison', HP: 45, Attack: 49, Defense: 49, Generation: 1, Legendary: false },
-        { '#': 4, Name: 'Charmander', 'Type 1': 'Fire', 'Type 2': null, HP: 39, Attack: 52, Defense: 43, Generation: 1, Legendary: false },
-        { '#': 7, Name: 'Squirtle', 'Type 1': 'Water', 'Type 2': null, HP: 44, Attack: 48, Defense: 65, Generation: 1, Legendary: false },
-      ]
+  const fetchDatasetPreview = async (datasetId: string, limit: number = 5) => {
+    try {
+      let query;
+      if (datasetId === 'pokemon') {
+        query = supabase.from('PokemonData').select('*').limit(limit);
+      } else {
+        query = supabase.from(datasetId).select('*').limit(limit);
+      }
+      
+      const { data, error } = await query;
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error(`Error fetching ${datasetId} preview:`, error);
+      return [];
     }
-  ];
+  };
+
+  const fetchDatasetCount = async (datasetId: string) => {
+    try {
+      const tableName = datasetId === 'pokemon' ? 'PokemonData' : datasetId;
+      const { count, error } = await supabase
+        .from(tableName)
+        .select('*', { count: 'exact', head: true });
+      
+      if (error) throw error;
+      return count || 0;
+    } catch (error) {
+      console.error(`Error fetching ${datasetId} count:`, error);
+      return 0;
+    }
+  };
+
+  const initializeDatasets = async () => {
+    const baseDatasets = [
+      {
+        id: 'CustomerExperience',
+        title: 'Customer Experience Analytics',
+        description: 'Customer satisfaction and retention data with demographics, interactions, and feedback scores',
+        columns: ['Customer_ID', 'Age', 'Gender', 'Location', 'Satisfaction_Score', 'Feedback_Score', 'Products_Purchased', 'Products_Viewed', 'Time_Spent_on_Site', 'Num_Interactions', 'Retention_Status']
+      },
+      {
+        id: 'SuccessEducationBackground',
+        title: 'Success & Education Analysis',
+        description: 'Educational backgrounds and career success metrics of professionals across various fields',
+        columns: ['Name', 'Degree', 'Field', 'Institution', 'Graduation Year', 'Country', 'University Global Ranking', 'GPA (or Equivalent)', 'Scholarship/Award', 'Profession']
+      },
+      {
+        id: 'pokemon',
+        title: 'Pokémon Battle Analytics',
+        description: 'Comprehensive Pokémon statistics including battle data, stats, types, and performance metrics',
+        columns: ['#', 'Name', 'Type 1', 'Type 2', 'HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed', 'Generation', 'Legendary', 'height', 'weight', 'base_experience']
+      }
+    ];
+
+    const datasetsWithData = await Promise.all(
+      baseDatasets.map(async (dataset) => {
+        const [preview, count] = await Promise.all([
+          fetchDatasetPreview(dataset.id),
+          fetchDatasetCount(dataset.id)
+        ]);
+
+        return {
+          ...dataset,
+          rows: count,
+          preview: preview
+        };
+      })
+    );
+
+    setDatasets(datasetsWithData);
+  };
 
   const getSampleQuestions = (datasetId: string) => {
     const questions = {
@@ -126,6 +162,8 @@ const DataVisualizationAgent: React.FC = () => {
           agent_type: 'data_visualization'
         });
 
+      // Initialize datasets with real data
+      await initializeDatasets();
       setLoading(false);
     };
 
@@ -151,7 +189,7 @@ const DataVisualizationAgent: React.FC = () => {
     });
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!currentMessage.trim() || !selectedDataset) return;
 
     const newMessage: Message = {
@@ -165,21 +203,39 @@ const DataVisualizationAgent: React.FC = () => {
     setCurrentMessage('');
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const result = await analyzeData(currentMessage, selectedDataset.id);
+      
       const response: Message = {
         id: (Date.now() + 1).toString(),
         type: 'agent',
-        content: `Based on your query about "${currentMessage}" using the ${selectedDataset.title} dataset with OpenAI GPT-4, here's what I found:`,
+        content: result.text,
         timestamp: new Date(),
-        data: {
+        data: result.table ? {
           type: 'table',
-          content: selectedDataset.preview.slice(0, 3)
-        }
+          content: result.table
+        } : undefined
       };
+      
       setMessages(prev => [...prev, response]);
+    } catch (error) {
+      console.error('Analysis error:', error);
+      const errorResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'agent',
+        content: `I apologize, but I encountered an error while analyzing your data: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorResponse]);
+      
+      toast({
+        title: "Analysis Error",
+        description: "Failed to analyze data. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   if (loading) {
