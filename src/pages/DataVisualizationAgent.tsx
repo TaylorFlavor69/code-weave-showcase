@@ -1,12 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Brain, Database, Send, Bot, User, BarChart3, Table, MessageSquare, LogOut } from 'lucide-react';
+import { ArrowLeft, Brain, Database, Send, Bot, User, BarChart3, Table, MessageSquare, LogOut, ChevronRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Table as TableComponent, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -79,6 +79,33 @@ const DataVisualizationAgent: React.FC = () => {
       ]
     }
   ];
+
+  const getSampleQuestions = (datasetId: string) => {
+    const questions = {
+      CustomerExperience: [
+        "What is the average satisfaction score by location?",
+        "Show me customers with high retention rates",
+        "Which demographics have the lowest satisfaction scores?",
+        "Compare satisfaction scores across different age groups",
+        "What's the correlation between time spent and purchases?"
+      ],
+      SuccessEducationBackground: [
+        "What are the most common degrees among successful people?",
+        "Show me the top universities by success rate",
+        "Compare success metrics across different fields",
+        "What's the average GPA of successful professionals?",
+        "Which countries produce the most successful graduates?"
+      ],
+      pokemon: [
+        "Which Pokemon has the highest attack stat?",
+        "Show me all legendary Pokemon and their stats",
+        "Compare different Pokemon types by average stats",
+        "What are the strongest Pokemon from Generation 1?",
+        "Which Pokemon type combination is most effective?"
+      ]
+    };
+    return questions[datasetId as keyof typeof questions] || [];
+  };
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -164,8 +191,8 @@ const DataVisualizationAgent: React.FC = () => {
   }
 
   return (
-    <div className="bg-charcoal min-h-screen">
-      <div className="container mx-auto px-4 py-12">
+    <div className="bg-charcoal min-h-screen flex flex-col">
+      <div className="container mx-auto px-4 py-12 flex-1 flex flex-col">
         <div className="flex justify-between items-center mb-8">
           <Link to="/#projects" className="inline-flex items-center text-electric hover:underline">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Projects
@@ -194,7 +221,7 @@ const DataVisualizationAgent: React.FC = () => {
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1">
           {/* Configuration Panel */}
           <div className="lg:col-span-1 space-y-6">
             {/* AI Model Display */}
@@ -243,43 +270,10 @@ const DataVisualizationAgent: React.FC = () => {
                 ))}
               </CardContent>
             </Card>
-
-            {/* Dataset Summary */}
-            {selectedDataset && (
-              <Card className="bg-secondary border-none">
-                <CardHeader>
-                  <CardTitle className="text-lg">Dataset Summary</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div>
-                      <h5 className="font-medium text-white">Columns:</h5>
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {selectedDataset.columns.map((col, idx) => (
-                          <Badge key={idx} variant="outline" className="text-xs">{col}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h5 className="font-medium text-white">Sample Data:</h5>
-                      <div className="text-xs space-y-1 mt-2 max-h-32 overflow-y-auto">
-                        {selectedDataset.preview.slice(0, 2).map((row, idx) => (
-                          <div key={idx} className="text-muted-foreground">
-                            {Object.entries(row).slice(0, 3).map(([key, value]) => (
-                              <div key={key}>{key}: {String(value)}</div>
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
           </div>
 
           {/* Chat Interface */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <Card className="bg-secondary border-none h-[600px] flex flex-col">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -381,6 +375,96 @@ const DataVisualizationAgent: React.FC = () => {
             </Card>
           </div>
         </div>
+
+        {/* Dataset Summary - Full Width Bottom Section */}
+        {selectedDataset && (
+          <div className="mt-6">
+            <Card className="bg-secondary border-none">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Database className="h-5 w-5 text-electric" />
+                  Dataset Overview: {selectedDataset.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Dataset Info */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-charcoal p-4 rounded-lg">
+                    <h4 className="font-medium text-white mb-2">Records</h4>
+                    <p className="text-2xl font-bold text-electric">{selectedDataset.rows.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-charcoal p-4 rounded-lg">
+                    <h4 className="font-medium text-white mb-2">Columns</h4>
+                    <p className="text-2xl font-bold text-electric">{selectedDataset.columns.length}</p>
+                  </div>
+                  <div className="bg-charcoal p-4 rounded-lg">
+                    <h4 className="font-medium text-white mb-2">Description</h4>
+                    <p className="text-sm text-muted-foreground">{selectedDataset.description}</p>
+                  </div>
+                </div>
+
+                {/* Data Preview Table */}
+                <div>
+                  <h4 className="font-medium text-white mb-3 flex items-center gap-2">
+                    <Table className="h-4 w-4" />
+                    Sample Data (First 5 Records)
+                  </h4>
+                  <div className="bg-charcoal rounded-lg p-4">
+                    <ScrollArea className="w-full">
+                      <div className="min-w-max">
+                        <TableComponent>
+                          <TableHeader>
+                            <TableRow>
+                              {selectedDataset.columns.map((column) => (
+                                <TableHead key={column} className="text-electric font-medium whitespace-nowrap">
+                                  {column}
+                                </TableHead>
+                              ))}
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {selectedDataset.preview.map((row, idx) => (
+                              <TableRow key={idx}>
+                                {selectedDataset.columns.map((column) => (
+                                  <TableCell key={column} className="text-white whitespace-nowrap">
+                                    {String(row[column] || '-')}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </TableComponent>
+                      </div>
+                    </ScrollArea>
+                  </div>
+                </div>
+
+                {/* Sample Questions */}
+                <div>
+                  <h4 className="font-medium text-white mb-3 flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    Try These Questions
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {getSampleQuestions(selectedDataset.id).map((question, idx) => (
+                      <Button
+                        key={idx}
+                        variant="outline"
+                        className="text-left justify-start p-3 h-auto bg-charcoal hover:bg-charcoal/80 border-muted text-white hover:text-electric transition-colors"
+                        onClick={() => setCurrentMessage(question)}
+                      >
+                        <div className="flex items-start gap-2 w-full">
+                          <ChevronRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-electric" />
+                          <span className="text-sm leading-relaxed">{question}</span>
+                        </div>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
