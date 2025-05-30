@@ -326,13 +326,13 @@ const DataVisualizationAgent: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Brain className="h-5 w-5 text-electric" />
-                  Analysis Method
+                  LLM
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center gap-2 p-3 bg-charcoal rounded-lg">
                   <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                  <span className="font-medium">LLM (PandasAI + OpenAI)</span>
+                  <span className="font-medium">Open AI</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Using PandasAI for conversational data analysis with OpenAI fallback
