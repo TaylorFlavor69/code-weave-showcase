@@ -8,11 +8,14 @@ export interface AnalysisResult {
     type: string
     data: any
   }
+  pythonResult?: any
 }
 
 export const analyzeData = async (
   query: string,
-  dataset: string
+  dataset: string,
+  usePython: boolean = true,
+  pythonScript?: string
 ): Promise<AnalysisResult> => {
   const { data: { user } } = await supabase.auth.getUser()
   
@@ -25,6 +28,8 @@ export const analyzeData = async (
       query,
       dataset,
       userId: user.id,
+      usePython,
+      pythonScript,
     },
   })
 

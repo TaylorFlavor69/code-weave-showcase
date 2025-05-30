@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Brain, Database, Send, Bot, User, BarChart3, Table, MessageSquare, LogOut, ChevronRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -43,6 +42,9 @@ const DataVisualizationAgent: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [usePython, setUsePython] = useState(true);
+  const [showPythonEditor, setShowPythonEditor] = useState(false);
+  const [customPythonScript, setCustomPythonScript] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -243,7 +245,12 @@ const DataVisualizationAgent: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const result = await analyzeData(currentMessage, selectedDataset.id);
+      const result = await analyzeData(
+        currentMessage, 
+        selectedDataset.id, 
+        usePython,
+        customPythonScript || undefined
+      );
       
       const response: Message = {
         id: (Date.now() + 1).toString(),
@@ -324,14 +331,47 @@ const DataVisualizationAgent: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Brain className="h-5 w-5 text-electric" />
-                  AI Model
+                  Analysis Method
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-3">
                 <div className="flex items-center gap-2 p-3 bg-charcoal rounded-lg">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="font-medium">OpenAI GPT-4</span>
+                  <div className={`w-2 h-2 rounded-full ${usePython ? 'bg-blue-500' : 'bg-green-500'}`}></div>
+                  <span className="font-medium">{usePython ? 'Python + pandas' : 'OpenAI GPT-4'}</span>
                 </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setUsePython(!usePython)}
+                  className="w-full"
+                >
+                  Switch to {usePython ? 'OpenAI' : 'Python'}
+                </Button>
+                {usePython && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowPythonEditor(!showPythonEditor)}
+                    className="w-full"
+                  >
+                    {showPythonEditor ? 'Hide' : 'Custom'} Python Script
+                  </Button>
+                )}
+                {showPythonEditor && usePython && (
+                  <div className="space-y-2">
+                    <Textarea
+                      value={customPythonScript}
+                      onChange={(e) => setCustomPythonScript(e.target.value)}
+                      placeholder="# Custom Python script
+# df is available as DataFrame
+# result = {'key': 'value'} to return data"
+                      className="min-h-[150px] font-mono text-xs"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Leave empty to use default analysis. The DataFrame 'df' and 'query' variables are available.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
