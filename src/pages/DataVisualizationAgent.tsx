@@ -42,9 +42,6 @@ const DataVisualizationAgent: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [usePython, setUsePython] = useState(true);
-  const [showPythonEditor, setShowPythonEditor] = useState(false);
-  const [customPythonScript, setCustomPythonScript] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -247,9 +244,7 @@ const DataVisualizationAgent: React.FC = () => {
     try {
       const result = await analyzeData(
         currentMessage, 
-        selectedDataset.id, 
-        usePython,
-        customPythonScript || undefined
+        selectedDataset.id
       );
       
       const response: Message = {
@@ -318,7 +313,7 @@ const DataVisualizationAgent: React.FC = () => {
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-4">Data Visualization AI Agent</h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Analyze data and create visualizations using natural language with AI-powered insights.
+              Analyze data and create visualizations using natural language with PandasAI-powered insights.
             </p>
           </div>
         </AnimatedSection>
@@ -336,42 +331,12 @@ const DataVisualizationAgent: React.FC = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center gap-2 p-3 bg-charcoal rounded-lg">
-                  <div className={`w-2 h-2 rounded-full ${usePython ? 'bg-blue-500' : 'bg-green-500'}`}></div>
-                  <span className="font-medium">{usePython ? 'Python + pandas' : 'OpenAI GPT-4'}</span>
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  <span className="font-medium">LLM (PandasAI + OpenAI)</span>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setUsePython(!usePython)}
-                  className="w-full"
-                >
-                  Switch to {usePython ? 'OpenAI' : 'Python'}
-                </Button>
-                {usePython && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowPythonEditor(!showPythonEditor)}
-                    className="w-full"
-                  >
-                    {showPythonEditor ? 'Hide' : 'Custom'} Python Script
-                  </Button>
-                )}
-                {showPythonEditor && usePython && (
-                  <div className="space-y-2">
-                    <Textarea
-                      value={customPythonScript}
-                      onChange={(e) => setCustomPythonScript(e.target.value)}
-                      placeholder="# Custom Python script
-# df is available as DataFrame
-# result = {'key': 'value'} to return data"
-                      className="min-h-[150px] font-mono text-xs"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Leave empty to use default analysis. The DataFrame 'df' and 'query' variables are available.
-                    </p>
-                  </div>
-                )}
+                <p className="text-xs text-muted-foreground">
+                  Using PandasAI for conversational data analysis with OpenAI fallback
+                </p>
               </CardContent>
             </Card>
 
@@ -417,7 +382,7 @@ const DataVisualizationAgent: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageSquare className="h-5 w-5 text-electric" />
-                  AI Chat
+                  PandasAI Chat
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col">
@@ -428,7 +393,7 @@ const DataVisualizationAgent: React.FC = () => {
                       <div className="text-center text-muted-foreground py-8">
                         <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
                         <p>Start a conversation by asking questions about your data!</p>
-                        <p className="text-sm mt-2">Try: "Show me customer satisfaction by region" or "What are the education trends?"</p>
+                        <p className="text-sm mt-2">PandasAI will analyze your data using Python and provide conversational insights.</p>
                       </div>
                     ) : (
                       messages.map((message) => (
@@ -442,7 +407,7 @@ const DataVisualizationAgent: React.FC = () => {
                             <div className={`rounded-lg p-4 ${
                               message.type === 'user' ? 'bg-electric text-charcoal' : 'bg-charcoal text-white'
                             }`}>
-                              <p className="mb-2">{message.content}</p>
+                              <p className="mb-2 whitespace-pre-wrap">{message.content}</p>
                               {message.data && message.data.type === 'table' && (
                                 <div className="mt-3 p-3 bg-secondary/50 rounded">
                                   <div className="flex items-center gap-2 mb-2">
@@ -473,7 +438,7 @@ const DataVisualizationAgent: React.FC = () => {
                         <div className="bg-charcoal text-white rounded-lg p-4">
                           <div className="flex items-center gap-2">
                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-electric"></div>
-                            <span>Analyzing data...</span>
+                            <span>PandasAI is analyzing your data...</span>
                           </div>
                         </div>
                       </div>
