@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -15,12 +14,22 @@ interface ProjectCardProps {
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, delay }) => {
   const navigate = useNavigate();
 
+  // Determine the correct link destination
+  const getViewDetailsLink = () => {
+    // If demo starts with '/', it's an internal route
+    if (project.demo && project.demo.startsWith('/')) {
+      return project.demo;
+    }
+    // Otherwise, use the project detail page
+    return `/project/${project.id}`;
+  };
+
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't navigate if clicking on buttons or links
     if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('a')) {
       return;
     }
-    navigate(`/project/${project.id}`);
+    navigate(getViewDetailsLink());
   };
 
   return (
@@ -52,7 +61,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, delay }) => {
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="secondary" asChild>
-          <Link to={`/project/${project.id}`}>View Details</Link>
+          <Link to={getViewDetailsLink()}>View Details</Link>
         </Button>
         <div className="flex gap-2">
           {project.github && (
@@ -64,9 +73,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, delay }) => {
           )}
           {project.demo && (
             <Button size="icon" variant="outline" asChild>
-              <a href={project.demo} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4" />
-              </a>
+              {project.demo.startsWith('/') ? (
+                <Link to={project.demo}>
+                  <ExternalLink className="h-4 w-4" />
+                </Link>
+              ) : (
+                <a href={project.demo} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              )}
             </Button>
           )}
         </div>
