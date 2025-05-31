@@ -105,13 +105,11 @@ const CustomerConversionAnalysis = () => {
             </div>
           </div>
           <div className="flex justify-center">
-            <div className="w-full max-w-md bg-graphite rounded-lg p-4">
-              <img
-                src="/lovable-uploads/17034ede-35a8-419a-8666-1abf4b00bb9d.png"
-                alt="Customer Conversion Analysis Funnel"
-                className="w-full h-auto object-contain rounded-lg"
-              />
-            </div>
+            <img
+              src="/lovable-uploads/17034ede-35a8-419a-8666-1abf4b00bb9d.png"
+              alt="Customer Conversion Analysis Funnel"
+              className="max-w-full h-auto rounded-lg shadow-2xl"
+            />
           </div>
         </div>
 
