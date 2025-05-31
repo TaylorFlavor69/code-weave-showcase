@@ -51,9 +51,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, delay }) => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Link to={`/project/${project.id}`}>
-          <Button variant="secondary">View Details</Button>
-        </Link>
+        <Button variant="secondary" asChild>
+          <Link to={`/project/${project.id}`}>View Details</Link>
+        </Button>
         <div className="flex gap-2">
           {project.github && (
             <Button size="icon" variant="outline" asChild>
