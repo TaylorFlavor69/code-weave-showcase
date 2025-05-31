@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import ProjectDetail from "./pages/ProjectDetail";
 import DataVisualizationAgent from "./pages/DataVisualizationAgent";
+import CustomerConversionAnalysis from "./pages/CustomerConversionAnalysis";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/project/:id" element={<ProjectDetail />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/data-visualization-agent" element={<DataVisualizationAgent />} />
+          <Route path="/customer-conversion-analysis" element={<CustomerConversionAnalysis />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

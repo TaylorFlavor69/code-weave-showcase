@@ -1,4 +1,3 @@
-
 import { ProjectData } from '@/components/ProjectModal';
 
 export const projects: ProjectData[] = [
@@ -57,10 +56,10 @@ export const projects: ProjectData[] = [
       </ul>
       <p class="mt-4">This platform helped identify key conversion bottlenecks and optimization opportunities, resulting in a 25% improvement in conversion rates.</p>
     `,
-    image: "/placeholder.svg",
+    image: "/lovable-uploads/17034ede-35a8-419a-8666-1abf4b00bb9d.png",
     tags: ["Python", "Machine Learning", "Statistical Analysis", "Data Visualization", "A/B Testing"],
     github: "https://github.com",
-    demo: "https://demo.com"
+    demo: "/customer-conversion-analysis"
   }
 ];
 
