@@ -60,7 +60,7 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3 mb-4">
+          <div className="space-y-1 mb-4">
             {roles.map((role, index) => (
               <div key={index}>
                 <h4 className="text-lg font-medium text-white">{role.title}</h4>
