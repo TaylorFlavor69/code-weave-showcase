@@ -39,11 +39,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, delay }) => {
       onClick={handleCardClick}
     >
       <CardHeader className="p-0">
-        <div className="aspect-video overflow-hidden">
+        <div className="aspect-video overflow-hidden rounded-t-lg">
           <img 
             src={project.image || "/placeholder.svg"}
             alt={project.title}
-            className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
           />
         </div>
       </CardHeader>
