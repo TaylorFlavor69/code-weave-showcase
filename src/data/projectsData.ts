@@ -37,10 +37,10 @@ export const projects: ProjectData[] = [
       </ul>
       <p class="mt-4">This system helped identify fraudulent activities and operational issues, resulting in a 40% reduction in fraud and improved system reliability.</p>
     `,
-    image: "/placeholder.svg",
+    image: "/lovable-uploads/f129c379-fae4-4af1-9389-0581fd47ff66.png",
     tags: ["Python", "Machine Learning", "Anomaly Detection", "Statistical Analysis", "Data Pipeline"],
     github: "https://github.com",
-    demo: "https://demo.com"
+    demo: "/anomaly-detection"
   },
   {
     id: 7,
