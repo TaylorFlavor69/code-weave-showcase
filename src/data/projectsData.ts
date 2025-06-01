@@ -1,4 +1,3 @@
-
 import { ProjectData } from '@/components/ProjectModal';
 
 export const projects: ProjectData[] = [
@@ -17,7 +16,7 @@ export const projects: ProjectData[] = [
       </ul>
       <p class="mt-4">This tool democratizes data analysis by allowing users to explore datasets using plain English queries.</p>
     `,
-    image: "/placeholder.svg",
+    image: "/lovable-uploads/72435d52-4370-45d4-9a56-4c8326d3559b.png",
     tags: ["Python", "PandasAI", "OpenAI", "Gemini", "Data Visualization"],
     github: "https://github.com",
     demo: "/data-visualization-agent"
