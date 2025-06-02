@@ -13,9 +13,11 @@ const executePandasAI = async (data: any[], query: string, openaiApiKey: string)
 import json
 import pandas as pd
 import os
-from pandasai import Agent
+from pandasai import SmartDataframe
 from pandasai.llm import OpenAI
 import sys
+import plotly.graph_objects as go
+import plotly.express as px
 
 # Set up OpenAI API key
 os.environ['OPENAI_API_KEY'] = '${openaiApiKey}'
@@ -29,12 +31,20 @@ try:
     data = json.loads(data_json)
     df = pd.DataFrame(data)
     
-    # Initialize PandasAI Agent with OpenAI
-    llm = OpenAI()
-    agent = Agent(df, config={"llm": llm, "verbose": True})
+    # Initialize PandasAI SmartDataframe with OpenAI
+    llm = OpenAI(api_token='${openaiApiKey}')
+    smart_df = SmartDataframe(
+        df,
+        config={
+            "llm": llm,
+            "custom_chart_engine": "plotly",
+            "save_charts": True,
+            "verbose": True
+        }
+    )
     
     # Use PandasAI to answer the query conversationally
-    response = agent.chat(query)
+    response = smart_df.chat(query)
     
     # Format the response
     result = {
@@ -133,18 +143,69 @@ serve(async (req) => {
       )
     }
 
-    // Fetch data based on dataset selection
+    // Fetch data based on dataset selection with enhanced Pokemon data handling
     let data
     let dataDescription = ''
     
     if (dataset === 'pokemon') {
-      const { data: pokemonData, error: pokemonError } = await supabaseClient
-        .from('PokemonData')
-        .select('*, Pokemon_BattleTable(*)')
+      // Fetch both Pokemon and Battle tables
+      const [pokemonResponse, battleResponse] = await Promise.all([
+        supabaseClient.from('PokemonData').select('*'),
+        supabaseClient.from('Pokemon_BattleTable').select('*')
+      ])
+
+      if (pokemonResponse.error) throw pokemonResponse.error
+      if (battleResponse.error) throw battleResponse.error
+
+      const pokemonData = pokemonResponse.data || []
+      const battleData = battleResponse.data || []
+
+      // Enhanced merge logic similar to your Python script
+      let mergedData = []
       
-      if (pokemonError) throw pokemonError
-      data = pokemonData
-      dataDescription = 'Pokémon dataset with stats including HP, Attack, Defense, types, and battle data'
+      for (const battle of battleData) {
+        const firstPokemon = pokemonData.find(p => p['#'] === battle.First_pokemon)
+        const secondPokemon = pokemonData.find(p => p['#'] === battle.Second_pokemon)
+        const winner = pokemonData.find(p => p['#'] === battle.Winner)
+        
+        const mergedRow = {
+          // Battle info
+          ...battle,
+          
+          // First Pokemon info (with suffix)
+          ...(firstPokemon ? Object.fromEntries(
+            Object.entries(firstPokemon).map(([key, value]) => 
+              key === '#' ? [key + '_Pokemon1', value] : [key + '_Pokemon1', value]
+            )
+          ) : {}),
+          
+          // Second Pokemon info (with suffix)
+          ...(secondPokemon ? Object.fromEntries(
+            Object.entries(secondPokemon).map(([key, value]) => 
+              key === '#' ? [key + '_Pokemon2', value] : [key + '_Pokemon2', value]
+            )
+          ) : {}),
+          
+          // Winner Pokemon info (with suffix)
+          ...(winner ? Object.fromEntries(
+            Object.entries(winner).map(([key, value]) => 
+              key === '#' ? [key + '_Winner', value] : [key + '_Winner', value]
+            )
+          ) : {})
+        }
+        
+        mergedData.push(mergedRow)
+      }
+
+      // If no battles found, use Pokemon data alone
+      if (mergedData.length === 0) {
+        data = pokemonData
+        dataDescription = 'Pokémon dataset with stats including HP, Attack, Defense, types, and abilities'
+      } else {
+        data = mergedData
+        dataDescription = 'Enhanced Pokémon dataset with battle data, including First/Second Pokemon stats and Winner information'
+      }
+      
     } else if (dataset === 'CustomerExperience') {
       const { data: customerData, error: customerError } = await supabaseClient
         .from('CustomerExperience')
@@ -190,7 +251,7 @@ serve(async (req) => {
     } catch (pandasError) {
       console.error('PandasAI execution failed, falling back to OpenAI:', pandasError)
       
-      // Fallback to OpenAI if PandasAI fails
+      // Enhanced fallback to OpenAI with better Pokemon analysis
       const dataContext = `
 Dataset: ${dataset}
 Description: ${dataDescription}
@@ -199,11 +260,19 @@ Sample data structure: ${JSON.stringify(data.slice(0, 2), null, 2)}
 
 Available columns: ${Object.keys(data[0] || {}).join(', ')}
 
+Special Pokemon Dataset Features:
+- Contains merged battle data with Pokemon stats
+- Pokemon1, Pokemon2, and Winner information available
+- Type combinations and battle effectiveness can be analyzed
+- Stats include HP, Attack, Defense, Sp. Atk, Sp. Def, Speed
+- Legendary status and generation information available
+
 You are acting as PandasAI, a conversational data analysis assistant. Analyze this dataset and provide:
 1. Direct answers to the user's question
 2. Relevant data insights and patterns
 3. Statistical summaries when appropriate
-4. Suggested follow-up questions
+4. Visualization suggestions for the data
+5. Follow-up questions to explore the data further
 
 User query: ${query}
 `
@@ -219,22 +288,23 @@ User query: ${query}
           messages: [
             {
               role: 'system',
-              content: `You are PandasAI, a conversational data analysis assistant. You help users understand their data through natural language conversations. 
+              content: `You are PandasAI, a conversational data analysis assistant specialized in Pokemon battle analysis. You help users understand their data through natural language conversations with a focus on Pokemon stats, types, and battle effectiveness.
 
 Key capabilities:
-- Analyze patterns and trends in datasets
-- Perform statistical analysis
-- Answer specific questions about data
-- Suggest visualizations and insights
-- Provide clear, actionable conclusions
+- Analyze Pokemon battle patterns and type effectiveness
+- Perform statistical analysis on Pokemon stats
+- Answer specific questions about Pokemon data and battles
+- Suggest visualizations for Pokemon data
+- Provide clear, actionable conclusions about Pokemon performance
 
 Always structure your responses with:
 1. Direct answer to the question
-2. Supporting data analysis
-3. Key insights or patterns found
-4. Suggested next steps or questions
+2. Supporting data analysis with specific Pokemon examples
+3. Key insights or patterns found in the data
+4. Suggested visualizations (charts, graphs, comparisons)
+5. Follow-up questions to explore Pokemon data further
 
-Be conversational, insightful, and data-driven in your responses.`
+Be conversational, insightful, and Pokemon-focused in your responses.`
             },
             {
               role: 'user',
@@ -255,12 +325,32 @@ Be conversational, insightful, and data-driven in your responses.`
       const aiResponse = await response.json()
       const analysisText = aiResponse.choices[0].message.content
 
-      // Filter data based on the query for more relevant table display
+      // Enhanced filtering logic for Pokemon data
       let relevantData = data.slice(0, 10) // Default to first 10 rows
       
-      // Simple filtering logic
-      if (query.toLowerCase().includes('legendary') && dataset === 'pokemon') {
-        relevantData = data.filter((row: any) => row.Legendary === true).slice(0, 10)
+      if (dataset === 'pokemon') {
+        if (query.toLowerCase().includes('legendary')) {
+          relevantData = data.filter((row: any) => 
+            row.Legendary === true || 
+            row.Legendary_Pokemon1 === true || 
+            row.Legendary_Pokemon2 === true || 
+            row.Legendary_Winner === true
+          ).slice(0, 10)
+        } else if (query.toLowerCase().includes('charizard')) {
+          relevantData = data.filter((row: any) => 
+            row.Name?.toLowerCase().includes('charizard') ||
+            row.Name_Pokemon1?.toLowerCase().includes('charizard') ||
+            row.Name_Pokemon2?.toLowerCase().includes('charizard') ||
+            row.Name_Winner?.toLowerCase().includes('charizard')
+          ).slice(0, 10)
+        } else if (query.toLowerCase().includes('fire') || query.toLowerCase().includes('type')) {
+          relevantData = data.filter((row: any) => 
+            row['Type 1']?.toLowerCase().includes('fire') ||
+            row['Type 2']?.toLowerCase().includes('fire') ||
+            row['Type 1_Pokemon1']?.toLowerCase().includes('fire') ||
+            row['Type 1_Pokemon2']?.toLowerCase().includes('fire')
+          ).slice(0, 10)
+        }
       } else if (query.toLowerCase().includes('satisfied') && dataset === 'CustomerExperience') {
         relevantData = data.filter((row: any) => row.Satisfaction_Score >= 8).slice(0, 10)
       } else if (query.toLowerCase().includes('phd') && dataset === 'SuccessEducationBackground') {
@@ -268,7 +358,7 @@ Be conversational, insightful, and data-driven in your responses.`
       }
 
       result = {
-        text: `${analysisText}\n\n(Note: Using OpenAI fallback as PandasAI is not available)`,
+        text: `${analysisText}\n\n(Note: Using OpenAI analysis as PandasAI environment is not available)`,
         table: relevantData,
         visualization: {
           type: 'table',
