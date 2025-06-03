@@ -132,10 +132,10 @@ const Experience: React.FC = () => {
         { text: "Supported and extended the client billing platform using C#, improving billing operations." },
         { text: "Streamlined billing processes and eDiscovery workflows, increasing throughput and clarity." },
         { text: "Provided frontline technical troubleshooting to both technical and non-technical users, minimizing business disruptions." },
-        { text: "Created user-friendly tools and forms that empowered users to complete secure, complex operations independently." }
-        { text: "Enforced data security, governance, and compliance standards across all environments, ensuring proper data retention and ethical usage practices." }
-        { text: "Designed and implemented autonomous QA and validation workflows, reducing risk of human error and enhancing both technical accuracy and procedural integrity." }
-        { text: "Collaborated with senior developers to execute both short-term priorities and long-term roadmap initiatives, supporting scalable and sustainable DevOps strategies." }
+        { text: "Created user-friendly tools and forms that empowered users to complete secure, complex operations independently." },
+        { text: "Enforced data security, governance, and compliance standards across all environments, ensuring proper data retention and ethical usage practices." },
+        { text: "Designed and implemented autonomous QA and validation workflows, reducing risk of human error and enhancing both technical accuracy and procedural integrity." },
+        { text: "Collaborated with senior developers to execute both short-term priorities and long-term roadmap initiatives, supporting scalable and sustainable DevOps strategies." },
         { text: "Extended functionality within the GDE (Graphical Development Environment) by leveraging JavaScript, enabling advanced workflows and empowering power users." }
       ],
       skills: ["Python", "PowerShell", "SQL", "C#", "JavaScript", "Automation"]
@@ -155,10 +155,10 @@ const Experience: React.FC = () => {
         { text: "Identified gaps in data collection and improved workflows for greater clarity and reliability." },
         { text: "Used R to perform sentiment analysis on customer feedback, delivering actionable insights." },
         { text: "Built automation scripts in C# and VBA to enhance CRM system efficiency and reduce manual tasks." },
-        { text: "Played a key role in CRM system rollovers, ensuring seamless transitions and minimal disruption." }
-        { text: "Analyzed customer journey data to identify friction points and improve handling processes, enhancing overall customer experience and operational efficiency." }
-        { text: "Delivered insightful data visualizations and dashboards to senior leadership, translating complex behavioral patterns into clear, actionable narratives." }
-        { text: "Collaborated cross-functionally with operations and support teams to align customer feedback with process improvements and service delivery goals." }
+        { text: "Played a key role in CRM system rollovers, ensuring seamless transitions and minimal disruption." },
+        { text: "Analyzed customer journey data to identify friction points and improve handling processes, enhancing overall customer experience and operational efficiency." },
+        { text: "Delivered insightful data visualizations and dashboards to senior leadership, translating complex behavioral patterns into clear, actionable narratives." },
+        { text: "Collaborated cross-functionally with operations and support teams to align customer feedback with process improvements and service delivery goals." },
         { text: "Utilized tools like Excel, Power BI and Tableau to uncover trends in customer interactions and guide strategic decision-making." }
       ],
       skills: ["R", "C#", "VBA", "SQL", "CRM", "Technical Support", "Data Analysis", "Process Improvement"]
