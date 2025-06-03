@@ -95,9 +95,9 @@ const Hero: React.FC = () => {
           <div className="flex-1 flex justify-center">
             <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-electric/30 animate-fade-in" style={{ animationDelay: '300ms' }}>
               <img 
-                src="/lovable-uploads/0dda9565-232c-4df1-a4b3-89b1f8bba77f.png"
+                src="/lovable-uploads/72d564ad-4a7b-4376-a3c1-93e8528b61c1.png"
                 alt="Justin Taylor"
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-center scale-110"
               />
             </div>
           </div>
