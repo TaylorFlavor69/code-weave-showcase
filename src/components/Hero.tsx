@@ -94,10 +94,11 @@ const Hero: React.FC = () => {
           
           <div className="flex-1 flex justify-center">
             <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-electric/30 animate-fade-in" style={{ animationDelay: '300ms' }}>
-              {/* Replace with your image */}
-              <div className="absolute inset-0 bg-secondary flex items-center justify-center text-white text-lg">
-                Your Photo
-              </div>
+              <img 
+                src="/lovable-uploads/0dda9565-232c-4df1-a4b3-89b1f8bba77f.png"
+                alt="Justin Taylor"
+                className="w-full h-full object-cover object-top"
+              />
             </div>
           </div>
         </div>
