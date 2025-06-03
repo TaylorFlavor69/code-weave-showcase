@@ -97,7 +97,7 @@ const Hero: React.FC = () => {
               <img 
                 src="/lovable-uploads/72d564ad-4a7b-4376-a3c1-93e8528b61c1.png"
                 alt="Justin Taylor"
-                className="w-full h-full object-cover object-center scale-110"
+                className="w-full h-full object-cover object-top scale-110"
               />
             </div>
           </div>
