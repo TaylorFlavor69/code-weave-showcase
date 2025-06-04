@@ -2,6 +2,7 @@
 import React from 'react';
 import { ArrowDownCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import DecryptedText from './DecryptedText';
 
 const Hero: React.FC = () => {
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
@@ -21,8 +22,30 @@ const Hero: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1 animate-fade-in">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
-              <span className="text-white">Hi, I'm </span>
-              <span className="text-electric">Justin Taylor</span>
+              <span className="text-white">
+                <DecryptedText 
+                  text="Hi, I'm " 
+                  animateOn="view"
+                  sequential={true}
+                  speed={100}
+                  maxIterations={8}
+                  useOriginalCharsOnly={true}
+                  className="text-white"
+                  encryptedClassName="text-muted-foreground"
+                />
+              </span>
+              <span className="text-electric">
+                <DecryptedText 
+                  text="Justin Taylor" 
+                  animateOn="view"
+                  sequential={true}
+                  speed={120}
+                  maxIterations={10}
+                  useOriginalCharsOnly={true}
+                  className="text-electric"
+                  encryptedClassName="text-electric/50"
+                />
+              </span>
             </h1>
             <h2 className="mt-4 text-2xl md:text-3xl font-medium text-muted-foreground">
               Data Science Professional
