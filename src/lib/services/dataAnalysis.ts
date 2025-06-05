@@ -37,8 +37,7 @@ export const analyzeData = async (
 }
 
 export const analyzePokemonWithPandasAI = async (
-  query: string,
-  openaiKey: string
+  query: string
 ): Promise<AnalysisResult> => {
   const { data: { user } } = await supabase.auth.getUser()
   
@@ -48,7 +47,6 @@ export const analyzePokemonWithPandasAI = async (
 
   const { data, error } = await supabase.functions.invoke('pandasai-render', {
     body: {
-      openai_key: openaiKey,
       question: query,
     },
   })

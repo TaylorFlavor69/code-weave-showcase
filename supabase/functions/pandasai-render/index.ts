@@ -14,12 +14,24 @@ serve(async (req) => {
   try {
     const body = await req.json()
 
-    const { openai_key, question } = body
-    if (!openai_key || !question) {
+    const { question } = body
+    if (!question) {
       return new Response(
-        JSON.stringify({ error: "Missing openai_key or question" }), 
+        JSON.stringify({ error: "Missing question" }), 
         { 
           status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    // Get OpenAI key from Supabase secrets
+    const openai_key = Deno.env.get("OPENAI_API_KEY")
+    if (!openai_key) {
+      return new Response(
+        JSON.stringify({ error: "OpenAI API key not configured" }), 
+        { 
+          status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       )
