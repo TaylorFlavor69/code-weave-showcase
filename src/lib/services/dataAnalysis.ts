@@ -36,6 +36,30 @@ export const analyzeData = async (
   return data
 }
 
+export const analyzePokemonWithPandasAI = async (
+  query: string,
+  openaiKey: string
+): Promise<AnalysisResult> => {
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    throw new Error('User must be authenticated')
+  }
+
+  const { data, error } = await supabase.functions.invoke('pandasai-render', {
+    body: {
+      openai_key: openaiKey,
+      question: query,
+    },
+  })
+
+  if (error) {
+    throw new Error(error.message || 'Failed to analyze Pokemon data with PandasAI')
+  }
+
+  return data
+}
+
 export const getQueryCount = async (): Promise<number> => {
   const { data: { user } } = await supabase.auth.getUser()
   

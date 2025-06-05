@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Brain, Database, Send, Bot, User, BarChart3, Table, MessageSquare, LogOut, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Brain, Database, Send, Bot, User, BarChart3, Table, MessageSquare, LogOut, ChevronRight, Key } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,9 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Table as TableComponent, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { analyzeData } from '@/lib/services/dataAnalysis';
+import { analyzeData, analyzePokemonWithPandasAI } from '@/lib/services/dataAnalysis';
 import AnimatedSection from '@/components/AnimatedSection';
 
 interface Dataset {
@@ -42,6 +44,8 @@ const DataVisualizationAgent: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [openaiKey, setOpenaiKey] = useState('');
+  const [showOpenAIInput, setShowOpenAIInput] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -230,6 +234,19 @@ const DataVisualizationAgent: React.FC = () => {
   const handleSendMessage = async () => {
     if (!currentMessage.trim() || !selectedDataset) return;
 
+    // Check if Pokemon dataset and OpenAI key is provided for enhanced analysis
+    const usePandasAI = selectedDataset.id === 'pokemon' && openaiKey.trim();
+
+    if (selectedDataset.id === 'pokemon' && !openaiKey.trim()) {
+      setShowOpenAIInput(true);
+      toast({
+        title: "OpenAI Key Required",
+        description: "Please provide your OpenAI API key for enhanced Pokemon analysis with PandasAI.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const newMessage: Message = {
       id: Date.now().toString(),
       type: 'user',
@@ -242,15 +259,22 @@ const DataVisualizationAgent: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const result = await analyzeData(
-        currentMessage, 
-        selectedDataset.id
-      );
+      let result;
+      
+      if (usePandasAI) {
+        // Use PandasAI for Pokemon dataset
+        result = await analyzePokemonWithPandasAI(currentMessage, openaiKey);
+      } else {
+        // Use regular analysis for other datasets
+        result = await analyzeData(currentMessage, selectedDataset.id);
+      }
       
       const response: Message = {
         id: (Date.now() + 1).toString(),
         type: 'agent',
-        content: result.text,
+        content: usePandasAI 
+          ? `**Enhanced PandasAI Analysis:**\n\n${result.text}` 
+          : result.text,
         timestamp: new Date(),
         data: result.table ? {
           type: 'table',
@@ -340,6 +364,36 @@ const DataVisualizationAgent: React.FC = () => {
               </CardContent>
             </Card>
 
+            {/* OpenAI Key Input for Pokemon Dataset */}
+            {(selectedDataset?.id === 'pokemon' || showOpenAIInput) && (
+              <Card className="bg-secondary border-none">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Key className="h-5 w-5 text-electric" />
+                    OpenAI API Key
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <Label htmlFor="openai-key" className="text-sm text-muted-foreground">
+                      Required for enhanced Pokemon analysis with PandasAI
+                    </Label>
+                    <Input
+                      id="openai-key"
+                      type="password"
+                      placeholder="sk-..."
+                      value={openaiKey}
+                      onChange={(e) => setOpenaiKey(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Your API key is used securely and not stored permanently.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Dataset Selection */}
             <Card className="bg-secondary border-none">
               <CardHeader>
@@ -382,7 +436,7 @@ const DataVisualizationAgent: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageSquare className="h-5 w-5 text-electric" />
-                  PandasAI Chat
+                  {selectedDataset?.id === 'pokemon' && openaiKey ? 'Enhanced PandasAI Chat' : 'PandasAI Chat'}
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col">
@@ -451,7 +505,9 @@ const DataVisualizationAgent: React.FC = () => {
                   <Textarea
                     value={currentMessage}
                     onChange={(e) => setCurrentMessage(e.target.value)}
-                    placeholder="Ask a question about your data..."
+                    placeholder={selectedDataset?.id === 'pokemon' 
+                      ? "Ask about Pokemon stats, battles, or types..." 
+                      : "Ask a question about your data..."}
                     className="flex-1 min-h-[50px] max-h-[100px]"
                     disabled={!selectedDataset || selectedDataset.rows === 0}
                     onKeyDown={(e) => {
@@ -473,6 +529,11 @@ const DataVisualizationAgent: React.FC = () => {
                 {!selectedDataset && (
                   <p className="text-xs text-muted-foreground mt-2">
                     Please select a dataset to start chatting.
+                  </p>
+                )}
+                {selectedDataset?.id === 'pokemon' && !openaiKey && (
+                  <p className="text-xs text-yellow-500 mt-2">
+                    Provide your OpenAI API key above for enhanced Pokemon analysis with PandasAI.
                   </p>
                 )}
                 {selectedDataset && selectedDataset.rows === 0 && (
