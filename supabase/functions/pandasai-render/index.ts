@@ -25,8 +25,8 @@ serve(async (req) => {
       )
     }
 
-    // Get OpenAI key from Supabase secrets
-    const openai_key = Deno.env.get("OPENAI_API_KEY")
+    // Get OpenAI key from Supabase secrets using the correct name
+    const openai_key = Deno.env.get("OpenAiKey")
     if (!openai_key) {
       return new Response(
         JSON.stringify({ error: "OpenAI API key not configured" }), 
