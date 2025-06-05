@@ -80,13 +80,13 @@ export type Database = {
       }
       PokemonData: {
         Row: {
-          "#": number
           Attack: number | null
           base_experience: number | null
           Defense: number | null
           Generation: number | null
           height: number | null
           HP: number | null
+          id: number
           Legendary: boolean | null
           Name: string | null
           "Sp. Atk": number | null
@@ -98,13 +98,13 @@ export type Database = {
           weight: number | null
         }
         Insert: {
-          "#": number
           Attack?: number | null
           base_experience?: number | null
           Defense?: number | null
           Generation?: number | null
           height?: number | null
           HP?: number | null
+          id: number
           Legendary?: boolean | null
           Name?: string | null
           "Sp. Atk"?: number | null
@@ -116,13 +116,13 @@ export type Database = {
           weight?: number | null
         }
         Update: {
-          "#"?: number
           Attack?: number | null
           base_experience?: number | null
           Defense?: number | null
           Generation?: number | null
           height?: number | null
           HP?: number | null
+          id?: number
           Legendary?: boolean | null
           Name?: string | null
           "Sp. Atk"?: number | null
