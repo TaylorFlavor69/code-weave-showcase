@@ -37,7 +37,7 @@ serve(async (req) => {
       )
     }
 
-    const renderUrl = "https://data-viz-agent-yubh.onrender.com"
+    const renderUrl = "https://data-viz-agent-yubh.onrender.com/run-chat/"
 
     const res = await fetch(renderUrl, {
       method: "POST",
