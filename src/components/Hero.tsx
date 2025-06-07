@@ -29,7 +29,7 @@ const Hero: React.FC = () => {
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
                 <span className="text-white">
                   <DecryptedText 
-                    text="Justin" 
+                    text="Justin " 
                     animateOn="view"
                     sequential={true}
                     speed={100}
@@ -59,7 +59,7 @@ const Hero: React.FC = () => {
                   rotationInterval={3000}
                   splitBy="characters"
                   staggerDuration={0.05}
-                  mainClassName="text-electric"
+                  mainClassName="text-electric inline-block"
                   initial={{ y: "100%", opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: "-100%", opacity: 0 }}

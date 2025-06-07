@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, {
@@ -198,7 +197,7 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
 
     return (
       <motion.span
-        className={cn("inline-block", mainClassName)}
+        className={cn("inline-block overflow-hidden", mainClassName)}
         {...rest}
         layout
         transition={transition}
@@ -211,6 +210,7 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
           <motion.div
             key={currentTextIndex}
             className={cn(
+              "inline-block",
               splitBy === "lines" ? "flex flex-col" : "inline-block"
             )}
             layout
