@@ -9,6 +9,7 @@ export interface AnalysisResult {
     data: any
   }
   pythonResult?: any
+  chart?: string // Add chart field for base64 images
 }
 
 export const analyzeData = async (
@@ -55,7 +56,21 @@ export const analyzePokemonWithPandasAI = async (
     throw new Error(error.message || 'Failed to analyze Pokemon data with PandasAI')
   }
 
-  return data
+  // Handle the structured response from PandasAI
+  const output = `**Enhanced PandasAI Analysis:**\n\n${data.response || data.text || 'Analysis completed successfully.'}`;
+  
+  const result: AnalysisResult = {
+    text: output,
+    table: data.table,
+    visualization: data.visualization
+  };
+
+  // Add chart if available
+  if (data.chart_base64) {
+    result.chart = `data:image/png;base64,${data.chart_base64}`;
+  }
+
+  return result;
 }
 
 export const getQueryCount = async (): Promise<number> => {
