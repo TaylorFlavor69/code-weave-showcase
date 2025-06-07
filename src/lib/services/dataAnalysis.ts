@@ -57,7 +57,7 @@ export const analyzePokemonWithPandasAI = async (
   }
 
   // Handle the structured response from PandasAI
-  const output = `**Enhanced PandasAI Analysis:**\n\n${data.response || data.text || 'Analysis completed successfully.'}`;
+  const output = data.response || data.text || 'Analysis completed successfully.';
   
   const result: AnalysisResult = {
     text: output,
