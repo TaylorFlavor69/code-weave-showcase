@@ -58,7 +58,7 @@ const Hero: React.FC = () => {
                   texts={rotatingTexts}
                   rotationInterval={3000}
                   splitBy="characters"
-                  staggerDuration={0.05}
+                  staggerDuration={0.035}
                   mainClassName="text-electric ml-2"
                   initial={{ y: "100%", opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
