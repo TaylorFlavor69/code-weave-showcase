@@ -4,6 +4,7 @@ import { ArrowDownCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import DecryptedText from './DecryptedText';
 import ScrollReveal from './ScrollReveal';
+import RotatingText from './RotatingText';
 
 const Hero: React.FC = () => {
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
@@ -16,6 +17,8 @@ const Hero: React.FC = () => {
       });
     }
   };
+
+  const rotatingTexts = ["Analyst", "Engineer", "Scientist", "Professional"];
 
   return (
     <div id="about" className="min-h-screen pt-16 flex flex-col justify-center relative">
@@ -50,7 +53,18 @@ const Hero: React.FC = () => {
                 </span>
               </h1>
               <h2 className="mt-4 text-2xl md:text-3xl font-medium text-muted-foreground">
-                Data Science Professional
+                <span className="text-white">Data </span>
+                <RotatingText
+                  texts={rotatingTexts}
+                  rotationInterval={3000}
+                  splitBy="characters"
+                  staggerDuration={0.05}
+                  mainClassName="text-electric"
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: "-100%", opacity: 0 }}
+                  transition={{ type: "spring", damping: 20, stiffness: 200 }}
+                />
               </h2>
               <p className="mt-6 text-lg text-muted-foreground max-w-2xl">
                 I transform complex data into actionable insights, build scalable machine learning solutions, 
