@@ -39,7 +39,7 @@ const Hero: React.FC = () => {
                     encryptedClassName="text-muted-foreground"
                   />
                 </span>
-                <span className="text-electric">
+                <span className="text-white">
                   <DecryptedText 
                     text="Taylor" 
                     animateOn="view"
@@ -47,8 +47,8 @@ const Hero: React.FC = () => {
                     speed={120}
                     maxIterations={10}
                     useOriginalCharsOnly={true}
-                    className="text-electric"
-                    encryptedClassName="text-electric/50"
+                    className="text-white"
+                    encryptedClassName="text-white/50"
                   />
                 </span>
               </h1>
