@@ -71,13 +71,9 @@ const Navbar: React.FC = () => {
         scrolled ? 'py-2 bg-charcoal/90 backdrop-blur-md shadow-lg' : 'py-4 bg-transparent'
       }`}
     >
-      <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
-        <a href="#top" className="text-xl md:text-2xl font-bold text-white">
-          <span className="text-electric">Justin</span> Taylor
-        </a>
-
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-4">
+      <div className="container mx-auto px-4 md:px-6 flex justify-center items-center">
+        {/* Desktop Navigation - Stretched across the top */}
+        <div className="hidden md:flex items-center justify-center space-x-8 w-full">
           <NavLink href="#about-me" title="About Me" />
           <NavLink href="#experience" title="Experience" />
           <NavLink href="#skills" title="Skills" />
@@ -87,7 +83,7 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Menu Button */}
         <button 
-          className="md:hidden text-white focus:outline-none"
+          className="md:hidden text-white focus:outline-none absolute right-4"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? (
