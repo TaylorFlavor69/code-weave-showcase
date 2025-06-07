@@ -52,14 +52,14 @@ const Hero: React.FC = () => {
                   />
                 </span>
               </h1>
-              <h2 className="mt-4 text-2xl md:text-3xl font-medium text-muted-foreground">
+              <h2 className="mt-4 text-2xl md:text-3xl font-medium text-muted-foreground flex items-baseline">
                 <span className="text-white">Data </span>
                 <RotatingText
                   texts={rotatingTexts}
                   rotationInterval={3000}
                   splitBy="characters"
                   staggerDuration={0.05}
-                  mainClassName="text-electric inline-block"
+                  mainClassName="text-electric"
                   initial={{ y: "100%", opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: "-100%", opacity: 0 }}
