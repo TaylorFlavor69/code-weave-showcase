@@ -26,7 +26,7 @@ const Hero: React.FC = () => {
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
                 <span className="text-white">
                   <DecryptedText 
-                    text="Hi, I'm " 
+                    text="Justin" 
                     animateOn="view"
                     sequential={true}
                     speed={100}
@@ -38,7 +38,7 @@ const Hero: React.FC = () => {
                 </span>
                 <span className="text-electric">
                   <DecryptedText 
-                    text="Justin Taylor" 
+                    text="Taylor" 
                     animateOn="view"
                     sequential={true}
                     speed={120}
