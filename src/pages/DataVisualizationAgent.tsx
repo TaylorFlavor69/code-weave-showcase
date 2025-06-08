@@ -258,9 +258,7 @@ const DataVisualizationAgent: React.FC = () => {
       const response: Message = {
         id: (Date.now() + 1).toString(),
         type: 'agent',
-        content: usePandasAI 
-          ? `**Enhanced PandasAI Analysis:**\n\n${result.text}` 
-          : result.text,
+        content: result.text,
         timestamp: new Date(),
         data: result.table ? {
           type: 'table',
