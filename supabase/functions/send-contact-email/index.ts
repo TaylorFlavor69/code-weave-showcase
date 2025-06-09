@@ -1,6 +1,6 @@
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
+import { Resend } from "npm:resend";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -52,8 +52,8 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const emailResponse = await resend.emails.send({
-      from: "Portfolio Contact <onboarding@resend.dev>",
-      to: ["Justin.d.taylor2@gmail.com"],
+      from: "onboarding@resend.dev",
+      to: "justin.d.taylor2@gmail.com",
       subject: subject,
       html: htmlContent,
     });
