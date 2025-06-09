@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface DemoRequestDialogProps {
   open: boolean;
@@ -41,8 +42,19 @@ const DemoRequestDialog: React.FC<DemoRequestDialogProps> = ({ open, onOpenChang
     e.preventDefault();
     setLoading(true);
 
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      const { error } = await supabase.functions.invoke('send-contact-email', {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          message: formData.message,
+          type: 'demo'
+        }
+      });
+
+      if (error) throw error;
+
       toast({
         title: "Demo Request Submitted!",
         description: "We'll review your request and get back to you within 24 hours with demo login credentials.",
@@ -56,9 +68,17 @@ const DemoRequestDialog: React.FC<DemoRequestDialogProps> = ({ open, onOpenChang
         message: ''
       });
       
-      setLoading(false);
       onOpenChange(false);
-    }, 1000);
+    } catch (error) {
+      console.error('Error sending demo request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send demo request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
