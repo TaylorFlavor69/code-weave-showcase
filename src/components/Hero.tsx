@@ -147,14 +147,14 @@ const Hero: React.FC = () => {
       </div>
       
       <ScrollReveal direction="fade" delay={1000}>
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce">
-          <span className="text-muted-foreground mb-2 text-sm">Scroll Down</span>
+        <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce">
+          <span className="text-muted-foreground mb-2 text-xs md:text-sm">Scroll Down</span>
           <a 
             href="#about-me" 
             onClick={(e) => handleSmoothScroll(e, "about-me")}
             className="cursor-pointer hover:text-electric transition-colors"
           >
-            <ArrowDownCircle className="text-electric w-6 h-6" />
+            <ArrowDownCircle className="text-electric w-5 h-5 md:w-6 md:h-6" />
           </a>
         </div>
       </ScrollReveal>
