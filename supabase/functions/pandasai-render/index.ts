@@ -26,7 +26,7 @@ serve(async (req) => {
     }
 
     // Get credentials from Supabase secrets
-    const openai_key = Deno.env.get("OpenAiKey")
+    const openai_key = Deno.env.get("OPENAI_API_KEY")
     const supabase_url = Deno.env.get("SUPABASE_URL")
     const supabase_service_key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
     
@@ -61,7 +61,7 @@ serve(async (req) => {
 
     const requestPayload = {
       supabase_url,
-      supabase_key: supabase_service_key, // Use service role key instead of anon key
+      supabase_key: supabase_service_key,
       openai_key,
       question,
     }
