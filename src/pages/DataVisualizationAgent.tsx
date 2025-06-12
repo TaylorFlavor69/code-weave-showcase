@@ -393,10 +393,10 @@ const DataVisualizationAgent: React.FC = () => {
                   {selectedDataset?.id === 'pokemon' ? 'Enhanced PandasAI Chat' : 'PandasAI Chat'}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="flex-1 flex flex-col">
+              <CardContent className="flex-1 flex flex-col overflow-hidden">
                 {/* Messages */}
-                <ScrollArea className="flex-1 mb-4">
-                  <div className="space-y-4">
+                <ScrollArea className="flex-1 mb-4 pr-4">
+                  <div className="space-y-4 min-h-0">
                     {messages.length === 0 ? (
                       <div className="text-center text-muted-foreground py-8">
                         <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -410,7 +410,7 @@ const DataVisualizationAgent: React.FC = () => {
                       messages.map((message) => (
                         <div key={message.id} className={`flex gap-3 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                           <div className={`flex gap-3 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                               message.type === 'user' ? 'bg-electric text-charcoal' : 'bg-purple-600 text-white'
                             }`}>
                               {message.type === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
@@ -418,7 +418,7 @@ const DataVisualizationAgent: React.FC = () => {
                             <div className={`rounded-lg p-4 ${
                               message.type === 'user' ? 'bg-electric text-charcoal' : 'bg-charcoal text-white'
                             }`}>
-                              <p className="mb-2 whitespace-pre-wrap">{message.content}</p>
+                              <p className="mb-2 whitespace-pre-wrap break-words">{message.content}</p>
                               {message.data && message.data.type === 'table' && (
                                 <div className="mt-3 p-3 bg-secondary/50 rounded">
                                   <div className="flex items-center gap-2 mb-2">
@@ -443,7 +443,7 @@ const DataVisualizationAgent: React.FC = () => {
                     )}
                     {isLoading && (
                       <div className="flex gap-3">
-                        <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center flex-shrink-0">
                           <Bot className="h-4 w-4" />
                         </div>
                         <div className="bg-charcoal text-white rounded-lg p-4">
@@ -458,7 +458,7 @@ const DataVisualizationAgent: React.FC = () => {
                 </ScrollArea>
 
                 {/* Message Input */}
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-shrink-0">
                   <Textarea
                     value={currentMessage}
                     onChange={(e) => setCurrentMessage(e.target.value)}
