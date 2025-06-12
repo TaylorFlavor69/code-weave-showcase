@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Code, Brain, Github, ArrowLeft } from 'lucide-react';
+import { Code, Github, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ProjectCallToActionProps {
@@ -12,7 +12,6 @@ interface ProjectCallToActionProps {
 
 const ProjectCallToAction: React.FC<ProjectCallToActionProps> = ({
   githubUrl,
-  demoUrl,
   notebookUrl
 }) => {
   return (
@@ -21,12 +20,6 @@ const ProjectCallToAction: React.FC<ProjectCallToActionProps> = ({
         <a href={notebookUrl || "#"} target="_blank" rel="noopener noreferrer">
           <Code className="mr-2 h-4 w-4" />
           Explore Full Notebook
-        </a>
-      </Button>
-      <Button variant="outline" asChild>
-        <a href={demoUrl || "#"} target="_blank" rel="noopener noreferrer">
-          <Brain className="mr-2 h-4 w-4" />
-          Try Model Live
         </a>
       </Button>
       {githubUrl && (
