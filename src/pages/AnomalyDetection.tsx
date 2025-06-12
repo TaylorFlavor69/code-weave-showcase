@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Github, ExternalLink, Code, BarChart3, Target, Download, Share2, Play } from 'lucide-react';
+import { ArrowLeft, Github, ExternalLink, Code, BarChart3, Target, Download, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -398,7 +398,7 @@ plt.show()`;
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-muted-foreground">
-                <div>• Scale to > 2 features for higher-dimensional analysis</div>
+                <div>• Scale to &gt; 2 features for higher-dimensional analysis</div>
                 <div>• Try Isolation Forest for tree-based anomaly detection</div>
                 <div>• Automate ε search with Bayesian optimization</div>
                 <div>• Deploy model for real-time server monitoring</div>
@@ -413,12 +413,6 @@ plt.show()`;
             <a href="#" target="_blank" rel="noopener noreferrer">
               <Download className="mr-2 h-4 w-4" />
               Download Notebook
-            </a>
-          </Button>
-          <Button variant="outline" asChild>
-            <a href="#" target="_blank" rel="noopener noreferrer">
-              <Play className="mr-2 h-4 w-4" />
-              Try Model Live
             </a>
           </Button>
           {project.github && (
