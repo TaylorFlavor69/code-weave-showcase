@@ -7,8 +7,7 @@ import ScrollReveal from './ScrollReveal';
 import RotatingText from './RotatingText';
 
 const Hero: React.FC = () => {
-  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
-    e.preventDefault();
+  const handleSmoothScroll = (targetId: string) => {
     const element = document.getElementById(targetId);
     if (element) {
       window.scrollTo({
@@ -89,58 +88,38 @@ const Hero: React.FC = () => {
             <Button 
               className="bg-electric text-charcoal hover:bg-white hover:text-charcoal"
               size="lg"
+              onClick={() => handleSmoothScroll("about-me")}
             >
-              <a 
-                href="#about-me" 
-                onClick={(e) => handleSmoothScroll(e, "about-me")}
-              >
-                About Me
-              </a>
+              About Me
             </Button>
             <Button 
               className="bg-teal text-charcoal hover:bg-teal/80"
               size="lg"
+              onClick={() => handleSmoothScroll("experience")}
             >
-              <a 
-                href="#experience" 
-                onClick={(e) => handleSmoothScroll(e, "experience")}
-              >
-                Experience
-              </a>
+              Experience
             </Button>
             <Button 
               className="bg-violet text-white hover:bg-violet/80"
               size="lg"
+              onClick={() => handleSmoothScroll("skills")}
             >
-              <a 
-                href="#skills" 
-                onClick={(e) => handleSmoothScroll(e, "skills")}
-              >
-                Skills
-              </a>
+              Skills
             </Button>
             <Button 
               className="bg-graphite text-white hover:bg-graphite/80 border border-electric"
               size="lg"
+              onClick={() => handleSmoothScroll("projects")}
             >
-              <a 
-                href="#projects" 
-                onClick={(e) => handleSmoothScroll(e, "projects")}
-              >
-                Projects
-              </a>
+              Projects
             </Button>
             <Button 
               variant="outline"
               className="border-2 border-electric text-electric hover:bg-electric hover:text-charcoal"
               size="lg"
+              onClick={() => handleSmoothScroll("contact")}
             >
-              <a 
-                href="#contact" 
-                onClick={(e) => handleSmoothScroll(e, "contact")}
-              >
-                Contact
-              </a>
+              Contact
             </Button>
           </div>
         </ScrollReveal>
@@ -149,13 +128,12 @@ const Hero: React.FC = () => {
       <ScrollReveal direction="fade" delay={1000}>
         <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce">
           <span className="text-muted-foreground mb-2 text-xs md:text-sm">Scroll Down</span>
-          <a 
-            href="#about-me" 
-            onClick={(e) => handleSmoothScroll(e, "about-me")}
+          <button 
+            onClick={() => handleSmoothScroll("about-me")}
             className="cursor-pointer hover:text-electric transition-colors"
           >
             <ArrowDownCircle className="text-electric w-5 h-5 md:w-6 md:h-6" />
-          </a>
+          </button>
         </div>
       </ScrollReveal>
     </div>
