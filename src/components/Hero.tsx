@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ArrowDownCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,12 +7,18 @@ import RotatingText from './RotatingText';
 
 const Hero: React.FC = () => {
   const handleSmoothScroll = (targetId: string) => {
+    console.log('Attempting to scroll to:', targetId);
     const element = document.getElementById(targetId);
+    console.log('Found element:', element);
+    
     if (element) {
+      console.log('Element offset top:', element.offsetTop);
       window.scrollTo({
         top: element.offsetTop,
         behavior: 'smooth'
       });
+    } else {
+      console.error('Element not found:', targetId);
     }
   };
 
@@ -88,28 +93,40 @@ const Hero: React.FC = () => {
             <Button 
               className="bg-electric text-charcoal hover:bg-white hover:text-charcoal"
               size="lg"
-              onClick={() => handleSmoothScroll("about-me")}
+              onClick={() => {
+                console.log('About Me button clicked');
+                handleSmoothScroll("about-me");
+              }}
             >
               About Me
             </Button>
             <Button 
               className="bg-teal text-charcoal hover:bg-teal/80"
               size="lg"
-              onClick={() => handleSmoothScroll("experience")}
+              onClick={() => {
+                console.log('Experience button clicked');
+                handleSmoothScroll("experience");
+              }}
             >
               Experience
             </Button>
             <Button 
               className="bg-violet text-white hover:bg-violet/80"
               size="lg"
-              onClick={() => handleSmoothScroll("skills")}
+              onClick={() => {
+                console.log('Skills button clicked');
+                handleSmoothScroll("skills");
+              }}
             >
               Skills
             </Button>
             <Button 
               className="bg-graphite text-white hover:bg-graphite/80 border border-electric"
               size="lg"
-              onClick={() => handleSmoothScroll("projects")}
+              onClick={() => {
+                console.log('Projects button clicked');
+                handleSmoothScroll("projects");
+              }}
             >
               Projects
             </Button>
@@ -117,7 +134,10 @@ const Hero: React.FC = () => {
               variant="outline"
               className="border-2 border-electric text-electric hover:bg-electric hover:text-charcoal"
               size="lg"
-              onClick={() => handleSmoothScroll("contact")}
+              onClick={() => {
+                console.log('Contact button clicked');
+                handleSmoothScroll("contact");
+              }}
             >
               Contact
             </Button>
@@ -129,7 +149,10 @@ const Hero: React.FC = () => {
         <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce">
           <span className="text-muted-foreground mb-2 text-xs md:text-sm">Scroll Down</span>
           <button 
-            onClick={() => handleSmoothScroll("about-me")}
+            onClick={() => {
+              console.log('Scroll down button clicked');
+              handleSmoothScroll("about-me");
+            }}
             className="cursor-pointer hover:text-electric transition-colors"
           >
             <ArrowDownCircle className="text-electric w-5 h-5 md:w-6 md:h-6" />
