@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ArrowDownCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,19 +8,36 @@ import RotatingText from './RotatingText';
 
 const Hero: React.FC = () => {
   const handleSmoothScroll = (targetId: string) => {
+    console.log('=== SCROLL DEBUG START ===');
     console.log('Attempting to scroll to:', targetId);
+    
     const element = document.getElementById(targetId);
     console.log('Found element:', element);
     
     if (element) {
       console.log('Element offset top:', element.offsetTop);
+      console.log('Current scroll position:', window.scrollY);
+      console.log('Window height:', window.innerHeight);
+      
+      // Account for the fixed navbar height (approximately 80px)
+      const navbarHeight = 80;
+      const targetPosition = element.offsetTop - navbarHeight;
+      
+      console.log('Target scroll position:', targetPosition);
+      
       window.scrollTo({
-        top: element.offsetTop,
+        top: targetPosition,
         behavior: 'smooth'
       });
+      
+      console.log('Scroll command executed');
     } else {
       console.error('Element not found:', targetId);
+      console.log('Available elements with IDs:', 
+        Array.from(document.querySelectorAll('[id]')).map(el => el.id)
+      );
     }
+    console.log('=== SCROLL DEBUG END ===');
   };
 
   const rotatingTexts = ["Analyst", "Engineer", "Scientist", "Professional"];

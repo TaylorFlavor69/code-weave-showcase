@@ -16,29 +16,29 @@ const Index = () => {
       <Navbar />
       <Hero />
       <ScrollReveal direction="up" delay={200}>
-        <div id="about-me">
+        <section id="about-me">
           <AboutMe />
-        </div>
+        </section>
       </ScrollReveal>
       <ScrollReveal direction="up" delay={100}>
-        <div id="experience">
+        <section id="experience">
           <Experience />
-        </div>
+        </section>
       </ScrollReveal>
       <ScrollReveal direction="up" delay={150}>
-        <div id="skills">
+        <section id="skills">
           <Skills />
-        </div>
+        </section>
       </ScrollReveal>
       <ScrollReveal direction="up" delay={100}>
-        <div id="projects">
+        <section id="projects">
           <Projects />
-        </div>
+        </section>
       </ScrollReveal>
       <ScrollReveal direction="up" delay={200}>
-        <div id="contact">
+        <section id="contact">
           <Contact />
-        </div>
+        </section>
       </ScrollReveal>
       <ScrollReveal direction="fade" delay={100}>
         <Footer />
