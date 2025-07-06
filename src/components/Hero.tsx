@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ArrowDownCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,15 +14,21 @@ const Hero: React.FC = () => {
     console.log('Found element:', element);
     
     if (element) {
+      // Get the element's position relative to the document
+      const rect = element.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const elementTop = rect.top + scrollTop;
+      
+      console.log('Element getBoundingClientRect:', rect);
+      console.log('Current scroll position:', scrollTop);
+      console.log('Element top relative to document:', elementTop);
       console.log('Element offset top:', element.offsetTop);
-      console.log('Current scroll position:', window.scrollY);
-      console.log('Window height:', window.innerHeight);
       
       // Account for the fixed navbar height (approximately 80px)
       const navbarHeight = 80;
-      const targetPosition = element.offsetTop - navbarHeight;
+      const targetPosition = Math.max(0, elementTop - navbarHeight);
       
-      console.log('Target scroll position:', targetPosition);
+      console.log('Final target scroll position:', targetPosition);
       
       window.scrollTo({
         top: targetPosition,
